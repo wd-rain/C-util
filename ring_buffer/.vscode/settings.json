@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdbool.h": "c",
+        "stdint.h": "c",
+        "ring_buffer.h": "c"
+    }
+}
