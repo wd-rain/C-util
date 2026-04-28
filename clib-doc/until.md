@@ -3,6 +3,7 @@ aliases:
   - until
   - until.h
   - C 工具宏
+depends: []
 tags:
   - c
   - clib
@@ -12,7 +13,11 @@ tags:
 
 # until
 
-`until.h` 提供一组轻量级 C 工具宏，主要用于数值处理、位操作、结构体成员定位、预处理器辅助和编译器属性适配。本文只说明 `until` 本身提供的接口，所有接口都使用独立标题，方便在 Obsidian 大纲中快速定位。
+`until.h` 提供一组轻量级 C 工具宏，主要用于数值处理、位操作、结构体成员定位、预处理器辅助、断言和编译器属性适配。本文只说明 `until` 本身提供的接口，所有接口都使用独立标题，方便在 Obsidian 大纲中快速定位。
+
+## 依赖关系
+
+`until` 是基础工具层，不依赖其他 clib 模块。
 
 ## 接口总览
 
@@ -32,6 +37,7 @@ tags:
 | 结构体成员定位 | `CONTAINER_OF(ptr, type, member)` | 由成员指针反推外层结构体指针 | `ptr` 必须指向 `type.member` |
 | 预处理器辅助 | `STRINGIFY(x)` | 将宏参数展开后转为字符串 | 常用于版本号、提示文本、`_Pragma` |
 | 预处理器辅助 | `CONCAT(a, b)` | 将两个标识符拼接成一个标识符 | 常用于生成变量名或函数名 |
+| 断言 | `ASSERT(expr)` | 检查必须成立的条件 | 失败后默认卡死在死循环 |
 | 编译器属性 | `WEAK` | 声明弱符号 | 可被同名强符号覆盖 |
 | 编译器属性 | `UNUSED` | 标记对象可能未使用 | 用于减少未使用告警 |
 | 编译器属性 | `PACKED` | 请求紧凑结构体布局 | 可能产生非对齐访问 |
@@ -207,6 +213,26 @@ int CONCAT(sensor_, ID);  // sensor_1
 ```
 
 常用于生成带编号的变量名、函数名或静态对象名。
+
+## 断言宏
+
+### `ASSERT(expr)`
+
+检查表达式 `expr` 是否成立。默认实现面向嵌入式调试场景：当表达式为假时进入 `while (1)`，程序会停在断言失败处。
+
+```c
+ASSERT(buffer != NULL);
+ASSERT(index < length);
+```
+
+`ASSERT` 使用 `#ifndef ASSERT` 保护，因此项目可以在包含 `until.h` 之前提供自己的实现：
+
+```c
+#define ASSERT(expr) my_assert_handler((expr), __FILE__, __LINE__)
+#include "until.h"
+```
+
+默认实现不返回错误码，也不尝试恢复运行。它适合用于暴露编程错误，例如空指针、非法枚举值、缺失平台操作函数等。
 
 ## 编译器属性宏
 

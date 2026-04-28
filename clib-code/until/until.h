@@ -20,6 +20,19 @@
 #define _CONCAT(a, b) a##b                                                                                     // 标识符拼接（内部辅助）
 #define CONCAT(a, b) _CONCAT(a, b)                                                                             // 标识符拼接
 
+#ifndef ASSERT
+#define ASSERT(expr)                                                                                           \
+    do                                                                                                          \
+    {                                                                                                           \
+        if (!(expr))                                                                                            \
+        {                                                                                                       \
+            while (1)                                                                                           \
+            {                                                                                                   \
+            }                                                                                                   \
+        }                                                                                                       \
+    } while (0)
+#endif
+
 // 编译器属性（自动识别编译器，未识别的编译器下属性宏会退化为空以避免报错）
 #if defined(__GNUC__) || defined(__clang__)
 #define WEAK         __attribute__((weak))
