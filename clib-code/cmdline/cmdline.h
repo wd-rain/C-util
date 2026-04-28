@@ -22,6 +22,7 @@ typedef struct cmdline_t
     const char* desc;
 }CmdLine;
 
+// 接口
 void cmd_line_init(CmdLine* self, cmd_line_fn fn, const char* name, const char* desc);
 int cmd_line_exe(CmdLine* self, char* line);
 const char* cmd_line_name(const CmdLine* self);
