@@ -1,65 +1,26 @@
 #include "gpio.h"
 
-static int _gpio_level_valid(GpioLevel level)
-{
-    return level == GPIO_LEVEL_LOW || level == GPIO_LEVEL_HIGH;
-}
-
-static int _gpio_mode_valid(GpioMode mode)
-{
-    return mode == GPIO_MODE_INPUT ||
-           mode == GPIO_MODE_OUTPUT ||
-           mode == GPIO_MODE_ALTERNATE ||
-           mode == GPIO_MODE_ANALOG;
-}
-
-static int _gpio_pull_valid(GpioPull pull)
-{
-    return pull == GPIO_PULL_NONE ||
-           pull == GPIO_PULL_UP ||
-           pull == GPIO_PULL_DOWN;
-}
-
-static int _gpio_speed_valid(GpioSpeed speed)
-{
-    return speed == GPIO_SPEED_LOW ||
-           speed == GPIO_SPEED_MEDIUM ||
-           speed == GPIO_SPEED_HIGH ||
-           speed == GPIO_SPEED_VERY_HIGH;
-}
-
-static int _gpio_output_type_valid(GpioOutputType output_type)
-{
-    return output_type == GPIO_OUTPUT_PUSH_PULL ||
-           output_type == GPIO_OUTPUT_OPEN_DRAIN;
-}
-
-static int _gpio_alternate_valid(GpioAlternate alternate)
-{
-    return alternate >= GPIO_ALTERNATE_NONE && alternate <= GPIO_ALTERNATE_15;
-}
-
 static void _gpio_assert_config(const GpioConfig* config)
 {
     ASSERT(config != NULL);
-    ASSERT(_gpio_mode_valid(config->mode));
-    ASSERT(_gpio_pull_valid(config->pull));
-    ASSERT(_gpio_speed_valid(config->speed));
-    ASSERT(_gpio_output_type_valid(config->output_type));
-    ASSERT(_gpio_alternate_valid(config->alternate));
-    ASSERT(_gpio_level_valid(config->level));
+    ASSERT(config->mode >= GPIO_MODE_INPUT && config->mode <= GPIO_MODE_ANALOG);
+    ASSERT(config->pull >= GPIO_PULL_NONE && config->pull <= GPIO_PULL_DOWN);
+    ASSERT(config->speed >= GPIO_SPEED_LOW && config->speed <= GPIO_SPEED_VERY_HIGH);
+    ASSERT(config->output_type >= GPIO_OUTPUT_PUSH_PULL && config->output_type <= GPIO_OUTPUT_OPEN_DRAIN);
+    ASSERT(config->alternate >= GPIO_ALTERNATE_NONE && config->alternate <= GPIO_ALTERNATE_15);
+    ASSERT(config->level >= GPIO_LEVEL_LOW && config->level <= GPIO_LEVEL_HIGH);
 }
 
 static GpioConfig _gpio_default_config(void)
 {
-    GpioConfig config;
-
-    config.mode = GPIO_DEFAULT_MODE;
-    config.pull = GPIO_DEFAULT_PULL;
-    config.speed = GPIO_DEFAULT_SPEED;
-    config.output_type = GPIO_DEFAULT_OUTPUT_TYPE;
-    config.alternate = GPIO_DEFAULT_ALTERNATE;
-    config.level = GPIO_DEFAULT_LEVEL;
+    GpioConfig config = {
+        GPIO_DEFAULT_MODE,
+        GPIO_DEFAULT_PULL,
+        GPIO_DEFAULT_SPEED,
+        GPIO_DEFAULT_OUTPUT_TYPE,
+        GPIO_DEFAULT_ALTERNATE,
+        GPIO_DEFAULT_LEVEL
+    };
 
     _gpio_assert_config(&config);
     return config;
@@ -162,7 +123,7 @@ void gpio_write(Gpio* self, GpioLevel level)
 {
     _gpio_assert_ready(self);
     ASSERT(self->ops->write != NULL);
-    ASSERT(_gpio_level_valid(level));
+    ASSERT(level >= GPIO_LEVEL_LOW && level <= GPIO_LEVEL_HIGH);
 
     self->config.level = level;
     self->ops->write(self->pin, level);
@@ -176,7 +137,7 @@ GpioLevel gpio_read(Gpio* self)
     ASSERT(self->ops->read != NULL);
 
     level = self->ops->read(self->pin);
-    ASSERT(_gpio_level_valid(level));
+    ASSERT(level >= GPIO_LEVEL_LOW && level <= GPIO_LEVEL_HIGH);
     self->config.level = level;
 
     return level;
@@ -201,5 +162,4 @@ void gpio_deinit(Gpio* self)
 
     self->ops = NULL;
     self->pin = 0U;
-    self->config = config;
 }
