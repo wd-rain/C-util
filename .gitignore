@@ -1,1 +1,81 @@
 .claude/
+
+# Build directories
+build/
+build-*/
+out/
+bin/
+obj/
+Debug/
+Release/
+cmake-build-*/
+
+# C/C++ build artifacts
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+*.so
+*.so.*
+*.dll
+*.dylib
+*.exe
+*.out
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.d
+*.su
+*.gcno
+*.gcda
+*.gcov
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+install_manifest.txt
+Makefile
+
+# Make and autotools
+*.make
+*.mk
+aclocal.m4
+autom4te.cache/
+config.cache
+config.log
+config.status
+configure
+libtool
+m4/
+
+# Coverage and profiling
+coverage/
+*.profraw
+*.profdata
+*.lcov
+
+# IDE and editor files
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp

@@ -124,25 +124,25 @@ I2C 运行期结果。
 ```c
 typedef enum i2c_status_t
 {
-    I2C_STATUS_OK = 0,
-    I2C_STATUS_ERROR,
-    I2C_STATUS_BUSY,
-    I2C_STATUS_TIMEOUT,
-    I2C_STATUS_NACK,
-    I2C_STATUS_ARBITRATION_LOST,
-    I2C_STATUS_OVERFLOW
+    WD_I2C_STATUS_OK = 0,
+    WD_I2C_STATUS_ERROR,
+    WD_I2C_STATUS_BUSY,
+    WD_I2C_STATUS_TIMEOUT,
+    WD_I2C_STATUS_NACK,
+    WD_I2C_STATUS_ARBITRATION_LOST,
+    WD_I2C_STATUS_OVERFLOW
 } I2cStatus;
 ```
 
 | 值 | 说明 |
 |---|---|
-| `I2C_STATUS_OK` | 操作成功 |
-| `I2C_STATUS_ERROR` | 通用错误 |
-| `I2C_STATUS_BUSY` | 总线或控制器忙 |
-| `I2C_STATUS_TIMEOUT` | 操作超时 |
-| `I2C_STATUS_NACK` | 设备未应答 |
-| `I2C_STATUS_ARBITRATION_LOST` | 仲裁丢失 |
-| `I2C_STATUS_OVERFLOW` | 输出容量不足，例如扫描结果数组已满 |
+| `WD_I2C_STATUS_OK` | 操作成功 |
+| `WD_I2C_STATUS_ERROR` | 通用错误 |
+| `WD_I2C_STATUS_BUSY` | 总线或控制器忙 |
+| `WD_I2C_STATUS_TIMEOUT` | 操作超时 |
+| `WD_I2C_STATUS_NACK` | 设备未应答 |
+| `WD_I2C_STATUS_ARBITRATION_LOST` | 仲裁丢失 |
+| `WD_I2C_STATUS_OVERFLOW` | 输出容量不足，例如扫描结果数组已满 |
 
 平台 ops 返回值必须是这些值之一，否则 API 层会触发 `ASSERT`。
 
@@ -153,12 +153,12 @@ I2C 寄存器地址宽度。
 ```c
 typedef enum i2c_mem_address_size_t
 {
-    I2C_MEM_ADDRESS_SIZE_8BIT = 0,
-    I2C_MEM_ADDRESS_SIZE_16BIT
+    WD_I2C_MEM_ADDRESS_SIZE_8BIT = 0,
+    WD_I2C_MEM_ADDRESS_SIZE_16BIT
 } I2cMemAddressSize;
 ```
 
-`I2C_MEM_ADDRESS_SIZE_8BIT` 要求 `mem_address <= 0xFF`。`I2C_MEM_ADDRESS_SIZE_16BIT` 使用完整 `uint16_t` 寄存器地址。
+`WD_I2C_MEM_ADDRESS_SIZE_8BIT` 要求 `mem_address <= 0xFF`。`WD_I2C_MEM_ADDRESS_SIZE_16BIT` 使用完整 `uint16_t` 寄存器地址。
 
 ### `I2cConfig`
 
@@ -367,7 +367,7 @@ i2c_init(&i2c, &board_i2c_ops, 0, &config, NULL);
 I2cStatus i2c_config(I2c* self, const I2cConfig* config);
 ```
 
-该函数会调用平台 `ops->config(self->bus, config)`。只有平台返回 `I2C_STATUS_OK` 时，才会把 `*config` 复制到 `self->config`。
+该函数会调用平台 `ops->config(self->bus, config)`。只有平台返回 `WD_I2C_STATUS_OK` 时，才会把 `*config` 复制到 `self->config`。
 
 `self`、`self->ops`、`self->ops->config` 和 `config` 必须有效。`config->clock_hz` 必须大于 0。
 
@@ -422,10 +422,10 @@ I2cStatus i2c_mem_write(I2c* self, uint8_t address, uint16_t mem_address, I2cMem
 ```c
 uint8_t value = 0x80;
 
-i2c_mem_write(&i2c, 0x50, 0x0010, I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
+i2c_mem_write(&i2c, 0x50, 0x0010, WD_I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
 ```
 
-`mem_address_size` 必须是 `I2C_MEM_ADDRESS_SIZE_8BIT` 或 `I2C_MEM_ADDRESS_SIZE_16BIT`。当 `mem_address_size == I2C_MEM_ADDRESS_SIZE_8BIT` 时，`mem_address` 必须不大于 `0xFF`。
+`mem_address_size` 必须是 `WD_I2C_MEM_ADDRESS_SIZE_8BIT` 或 `WD_I2C_MEM_ADDRESS_SIZE_16BIT`。当 `mem_address_size == WD_I2C_MEM_ADDRESS_SIZE_8BIT` 时，`mem_address` 必须不大于 `0xFF`。
 
 ### `i2c_mem_read(self, address, mem_address, mem_address_size, data, len, timeout_ms)`
 
@@ -440,7 +440,7 @@ I2cStatus i2c_mem_read(I2c* self, uint8_t address, uint16_t mem_address, I2cMemA
 ```c
 uint8_t value;
 
-i2c_mem_read(&i2c, 0x50, 0x0010, I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
+i2c_mem_read(&i2c, 0x50, 0x0010, WD_I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
 ```
 
 寄存器读需要 repeated start 时，由平台 `mem_read` 实现。通用 `i2c` API 不把 repeated start 细节暴露给上层调用者。
@@ -461,7 +461,7 @@ I2cStatus i2c_is_device_ready(I2c* self, uint8_t address, size_t trials, uint32_
 i2c_write(self, address, NULL, 0U, timeout_ms);
 ```
 
-如果任意一次返回 `I2C_STATUS_OK`，则 `i2c_is_device_ready` 返回 `I2C_STATUS_OK`。如果全部失败，则返回最后一次失败状态。
+如果任意一次返回 `WD_I2C_STATUS_OK`，则 `i2c_is_device_ready` 返回 `WD_I2C_STATUS_OK`。如果全部失败，则返回最后一次失败状态。
 
 平台 `write` 必须支持 `data == NULL && len == 0` 的地址探测形式，否则 `i2c_is_device_ready` 和 `i2c_scan` 都无法使用。
 
@@ -477,12 +477,12 @@ I2cStatus i2c_scan(I2c* self, uint8_t* addresses, size_t capacity, size_t* found
 
 扫描规则：
 
-- `I2C_STATUS_OK`：记录地址。
-- `I2C_STATUS_NACK`：认为该地址没有设备，继续扫描。
+- `WD_I2C_STATUS_OK`：记录地址。
+- `WD_I2C_STATUS_NACK`：认为该地址没有设备，继续扫描。
 - 其他状态：立即中止扫描并返回该状态。
-- `addresses` 容量不足：返回 `I2C_STATUS_OVERFLOW`。
+- `addresses` 容量不足：返回 `WD_I2C_STATUS_OVERFLOW`。
 
-`found_count` 必须非空。`addresses` 可以为 `NULL`，但此时 `capacity` 必须为 0；如果发现设备，会返回 `I2C_STATUS_OVERFLOW`。
+`found_count` 必须非空。`addresses` 可以为 `NULL`，但此时 `capacity` 必须为 0；如果发现设备，会返回 `WD_I2C_STATUS_OVERFLOW`。
 
 ## 释放接口
 
@@ -529,7 +529,7 @@ static I2cStatus board_i2c_write(size_t bus, uint8_t address, const uint8_t* dat
 
     (void)bus;
     (void)timeout_ms;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 ```
 
@@ -544,7 +544,7 @@ static I2cStatus mock_i2c_config(size_t bus, const I2cConfig* config)
 {
     (void)bus;
     ASSERT(config != NULL);
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 static I2cStatus mock_i2c_write(size_t bus, uint8_t address, const uint8_t* data, size_t len, uint32_t timeout_ms)
@@ -554,7 +554,7 @@ static I2cStatus mock_i2c_write(size_t bus, uint8_t address, const uint8_t* data
     (void)data;
     (void)len;
     (void)timeout_ms;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 static I2cStatus mock_i2c_read(size_t bus, uint8_t address, uint8_t* data, size_t len, uint32_t timeout_ms)
@@ -564,7 +564,7 @@ static I2cStatus mock_i2c_read(size_t bus, uint8_t address, uint8_t* data, size_
     (void)data;
     (void)len;
     (void)timeout_ms;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 static I2cStatus mock_i2c_mem_write(size_t bus, uint8_t address, uint16_t mem_address, I2cMemAddressSize mem_address_size, const uint8_t* data, size_t len, uint32_t timeout_ms)
@@ -576,7 +576,7 @@ static I2cStatus mock_i2c_mem_write(size_t bus, uint8_t address, uint16_t mem_ad
     (void)data;
     (void)len;
     (void)timeout_ms;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 static I2cStatus mock_i2c_mem_read(size_t bus, uint8_t address, uint16_t mem_address, I2cMemAddressSize mem_address_size, uint8_t* data, size_t len, uint32_t timeout_ms)
@@ -588,7 +588,7 @@ static I2cStatus mock_i2c_mem_read(size_t bus, uint8_t address, uint16_t mem_add
     (void)data;
     (void)len;
     (void)timeout_ms;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 static void mock_i2c_deinit(size_t bus)
@@ -613,11 +613,11 @@ int main(void)
 
     config.clock_hz = I2C_DEFAULT_CLOCK_HZ;
 
-    if (i2c_init(&i2c, &mock_i2c_ops, 0, &config, NULL) == I2C_STATUS_OK)
+    if (i2c_init(&i2c, &mock_i2c_ops, 0, &config, NULL) == WD_I2C_STATUS_OK)
     {
-        i2c_mem_read(&i2c, 0x50, 0x0000, I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
+        i2c_mem_read(&i2c, 0x50, 0x0000, WD_I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
         value = 0x5AU;
-        i2c_mem_write(&i2c, 0x50, 0x0000, I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
+        i2c_mem_write(&i2c, 0x50, 0x0000, WD_I2C_MEM_ADDRESS_SIZE_16BIT, &value, 1U, 100U);
         i2c_deinit(&i2c);
     }
 
@@ -644,7 +644,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\i2c\i2c.c
 - 不绑定 GPIO 时，`i2c_init` 只调用一次 `ops->config`。
 - 绑定 GPIO 时，`i2c_init` 先初始化 SCL/SDA，再调用 `ops->config`。
 - `ops->config` 返回失败时，已初始化的 SCL/SDA 会被回滚。
-- `i2c_config` 只在返回 `I2C_STATUS_OK` 时更新缓存配置。
+- `i2c_config` 只在返回 `WD_I2C_STATUS_OK` 时更新缓存配置。
 - `i2c_write`、`i2c_read`、`i2c_mem_write` 和 `i2c_mem_read` 会原样透传参数到对应 ops。
 - `i2c_is_device_ready` 会通过零长度写事务重试。
 - `i2c_scan` 会跳过 NACK，并在非 NACK 错误时中止扫描。
@@ -659,6 +659,6 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\i2c\i2c.c
 - 所有设备地址都是 7 位地址，不左移，不包含 R/W bit。
 - `i2c_is_device_ready` 依赖零长度 `write`，平台 `write` 应支持 `data == NULL && len == 0`。
 - `i2c_mem_read` 的 repeated start 等细节由平台 `mem_read` 实现。
-- `i2c_config` 只有在平台返回 `I2C_STATUS_OK` 时才更新缓存配置。
+- `i2c_config` 只有在平台返回 `WD_I2C_STATUS_OK` 时才更新缓存配置。
 - `gpio_cfg == NULL` 表示不绑定 GPIO；绑定 GPIO 时，SCL/SDA 生命周期由 `i2c_init` 和 `i2c_deinit` 管理。
 - `i2c_deinit` 后对象不再有效，继续使用会触发断言。

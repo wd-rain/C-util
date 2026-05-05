@@ -3,17 +3,17 @@
 static void _gpio_assert_config(const GpioConfig *config)
 {
     ASSERT(config != NULL);
-    ASSERT(config->mode >= GPIO_MODE_INPUT && config->mode <= GPIO_MODE_ANALOG);
-    ASSERT(config->pull >= GPIO_PULL_NONE && config->pull <= GPIO_PULL_DOWN);
-    ASSERT(config->speed >= GPIO_SPEED_LOW && config->speed <= GPIO_SPEED_VERY_HIGH);
-    ASSERT(config->output_type >= GPIO_OUTPUT_PUSH_PULL && config->output_type <= GPIO_OUTPUT_OPEN_DRAIN);
-    ASSERT(config->alternate >= GPIO_ALTERNATE_NONE && config->alternate <= GPIO_ALTERNATE_15);
-    ASSERT(config->level >= GPIO_LEVEL_LOW && config->level <= GPIO_LEVEL_HIGH);
+    ASSERT(config->mode <= WD_GPIO_MODE_ANALOG);
+    ASSERT(config->pull <= WD_GPIO_PULL_DOWN);
+    ASSERT(config->speed <= WD_GPIO_SPEED_VERY_HIGH);
+    ASSERT(config->output_type <= WD_GPIO_OUTPUT_OPEN_DRAIN);
+    ASSERT(config->alternate <= WD_GPIO_ALTERNATE_15);
+    ASSERT(config->level <= WD_GPIO_LEVEL_HIGH);
 }
 
 static void _gpio_assert_level(GpioLevel level)
 {
-    ASSERT(level >= GPIO_LEVEL_LOW && level <= GPIO_LEVEL_HIGH);
+    ASSERT(level <= WD_GPIO_LEVEL_HIGH);
 }
 
 static GpioConfig _gpio_default_config(void)
@@ -75,6 +75,13 @@ void gpio_config(Gpio *self, const GpioConfig *config)
     _gpio_config_checked(self, config);
 }
 
+const GpioConfig *gpio_get_config(const Gpio *self)
+{
+    _gpio_assert_ready(self);
+
+    return &self->config;
+}
+
 void gpio_write(Gpio *self, GpioLevel level)
 {
     _gpio_assert_ready(self);
@@ -101,7 +108,7 @@ void gpio_toggle(Gpio *self)
 {
     GpioLevel level = gpio_read(self);
 
-    gpio_write(self, level == GPIO_LEVEL_LOW ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
+    gpio_write(self, level == WD_GPIO_LEVEL_LOW ? WD_GPIO_LEVEL_HIGH : WD_GPIO_LEVEL_LOW);
 }
 
 void gpio_deinit(Gpio *self)

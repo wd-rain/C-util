@@ -2,9 +2,9 @@
 
 static void _i2c_assert_mem_address(uint16_t mem_address, I2cMemAddressSize mem_address_size)
 {
-    ASSERT(mem_address_size >= I2C_MEM_ADDRESS_SIZE_8BIT && mem_address_size <= I2C_MEM_ADDRESS_SIZE_16BIT);
+    ASSERT(mem_address_size <= WD_I2C_MEM_ADDRESS_SIZE_16BIT);
 
-    if (mem_address_size == I2C_MEM_ADDRESS_SIZE_8BIT)
+    if (mem_address_size == WD_I2C_MEM_ADDRESS_SIZE_8BIT)
     {
         ASSERT(mem_address <= UINT8_MAX);
     }
@@ -51,18 +51,18 @@ static void _i2c_assert_ops(const I2cOps *ops)
 
 static void _i2c_assert_status(I2cStatus status)
 {
-    ASSERT(status >= I2C_STATUS_OK && status <= I2C_STATUS_OVERFLOW);
+    ASSERT(status <= WD_I2C_STATUS_OVERFLOW);
 }
 
 static void _i2c_assert_gpio_pin_config(const GpioConfig *config)
 {
     ASSERT(config != NULL);
-    ASSERT(config->mode >= GPIO_MODE_INPUT && config->mode <= GPIO_MODE_ANALOG);
-    ASSERT(config->pull >= GPIO_PULL_NONE && config->pull <= GPIO_PULL_DOWN);
-    ASSERT(config->speed >= GPIO_SPEED_LOW && config->speed <= GPIO_SPEED_VERY_HIGH);
-    ASSERT(config->output_type >= GPIO_OUTPUT_PUSH_PULL && config->output_type <= GPIO_OUTPUT_OPEN_DRAIN);
-    ASSERT(config->alternate >= GPIO_ALTERNATE_NONE && config->alternate <= GPIO_ALTERNATE_15);
-    ASSERT(config->level >= GPIO_LEVEL_LOW && config->level <= GPIO_LEVEL_HIGH);
+    ASSERT(config->mode <= WD_GPIO_MODE_ANALOG);
+    ASSERT(config->pull <= WD_GPIO_PULL_DOWN);
+    ASSERT(config->speed <= WD_GPIO_SPEED_VERY_HIGH);
+    ASSERT(config->output_type <= WD_GPIO_OUTPUT_OPEN_DRAIN);
+    ASSERT(config->alternate <= WD_GPIO_ALTERNATE_15);
+    ASSERT(config->level <= WD_GPIO_LEVEL_HIGH);
 }
 
 static void _i2c_assert_gpio_config(const I2cGpioConfig *gpio_cfg)
@@ -134,7 +134,7 @@ static I2cStatus _i2c_config_checked(I2c *self, const I2cConfig *config)
     status = self->ops->config(self->bus, config);
     _i2c_assert_status(status);
 
-    if (status == I2C_STATUS_OK)
+    if (status == WD_I2C_STATUS_OK)
     {
         self->config = *config;
     }
@@ -187,13 +187,13 @@ static I2cStatus _i2c_is_device_ready_checked(I2c *self, uint8_t address, size_t
     I2cStatus status;
     size_t i;
 
-    status = I2C_STATUS_ERROR;
+    status = WD_I2C_STATUS_ERROR;
     for (i = 0U; i < trials; ++i)
     {
         status = _i2c_write_checked(self, address, NULL, 0U, timeout_ms);
-        if (status == I2C_STATUS_OK)
+        if (status == WD_I2C_STATUS_OK)
         {
-            return I2C_STATUS_OK;
+            return WD_I2C_STATUS_OK;
         }
     }
 
@@ -220,7 +220,7 @@ I2cStatus i2c_init(I2c *self, const I2cOps *ops, size_t bus, const I2cConfig *co
 
     status = _i2c_config_checked(self, config);
 
-    if (status != I2C_STATUS_OK)
+    if (status != WD_I2C_STATUS_OK)
     {
         _i2c_deinit_gpio(self);
         _i2c_clear(self);
@@ -228,7 +228,7 @@ I2cStatus i2c_init(I2c *self, const I2cOps *ops, size_t bus, const I2cConfig *co
     }
 
     self->config = *config;
-    return I2C_STATUS_OK;
+    return WD_I2C_STATUS_OK;
 }
 
 I2cStatus i2c_config(I2c *self, const I2cConfig *config)
@@ -289,22 +289,22 @@ I2cStatus i2c_scan(I2c *self, uint8_t *addresses, size_t capacity, size_t *found
     _i2c_assert_ready(self);
     _i2c_assert_scan(addresses, capacity, found_count);
 
-    status = I2C_STATUS_OK;
+    status = WD_I2C_STATUS_OK;
     count = 0U;
     for (address = I2C_SCAN_ADDRESS_MIN; address <= I2C_SCAN_ADDRESS_MAX; ++address)
     {
         probe = _i2c_is_device_ready_checked(self, (uint8_t)address, 1U, timeout_ms);
-        if (probe == I2C_STATUS_OK)
+        if (probe == WD_I2C_STATUS_OK)
         {
             if (count >= capacity)
             {
-                status = I2C_STATUS_OVERFLOW;
+                status = WD_I2C_STATUS_OVERFLOW;
                 break;
             }
             addresses[count] = (uint8_t)address;
             ++count;
         }
-        else if (probe != I2C_STATUS_NACK)
+        else if (probe != WD_I2C_STATUS_NACK)
         {
             status = probe;
             break;

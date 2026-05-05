@@ -27,27 +27,28 @@ tags:
 
 ## 接口总览
 
-| 类别 | 接口 | 基本功能 | 使用要点 |
-|---|---|---|---|
-| 配置 | `GPIO_DEFAULT_*` | 配置初始化和释放时的默认状态 | 默认是悬空输入 |
-| 类型 | `GpioLevel` | GPIO 电平语义 | `GPIO_LEVEL_LOW` 或 `GPIO_LEVEL_HIGH` |
-| 类型 | `GpioMode` | GPIO 模式语义 | 输入、输出、复用、模拟 |
-| 类型 | `GpioPull` | 上下拉语义 | 无上下拉、上拉、下拉 |
-| 类型 | `GpioSpeed` | 输出速度语义 | 由平台映射到实际速度档 |
-| 类型 | `GpioOutputType` | 输出类型语义 | 推挽或开漏 |
-| 类型 | `GpioAlternate` | 复用功能语义 | `GPIO_ALTERNATE_NONE` 或 `GPIO_ALTERNATE_0` 到 `GPIO_ALTERNATE_15` |
-| 类型 | `GpioConfig` | GPIO 完整配置 | 保存模式、上下拉、速度、输出类型、复用和电平 |
-| Ops | `gpio_config_fn` | 平台配置函数类型 | 形参为 `pin` 和 `GpioConfig` |
-| Ops | `gpio_write_fn` | 平台写电平函数类型 | 形参为 `pin` 和 `level` |
-| Ops | `gpio_read_fn` | 平台读电平函数类型 | 返回 `GpioLevel` |
-| Ops | `GpioOps` | 平台硬件操作集合 | `config`、`write`、`read` 都必须实现 |
-| 类型 | `Gpio` | GPIO 对象 | 保存 ops、pin 和当前配置缓存 |
-| 初始化 | `gpio_init(self, ops, pin)` | 初始化 GPIO 对象 | 会配置为默认悬空输入 |
-| 配置 | `gpio_config(self, config)` | 整体更新 GPIO 配置 | 调用 `ops->config` |
-| 读写 | `gpio_write(self, level)` | 写 GPIO 电平 | 调用 `ops->write` 并更新缓存电平 |
-| 读写 | `gpio_read(self)` | 读 GPIO 电平 | 调用 `ops->read` 并更新缓存电平 |
-| 读写 | `gpio_toggle(self)` | 翻转 GPIO 电平 | 由 `gpio_read` 和 `gpio_write` 实现 |
-| 释放 | `gpio_deinit(self)` | 恢复默认输入并清空对象 | 调用默认 `config` 后清空对象 |
+| 类别  | 接口                          | 基本功能           | 使用要点                                                                      |
+| --- | --------------------------- | -------------- | ------------------------------------------------------------------------- |
+| 配置  | `GPIO_DEFAULT_*`            | 配置初始化和释放时的默认状态 | 默认是悬空输入                                                                   |
+| 类型  | `GpioLevel`                 | GPIO 电平语义      | `WD_GPIO_LEVEL_LOW` 或 `WD_GPIO_LEVEL_HIGH`                                |
+| 类型  | `GpioMode`                  | GPIO 模式语义      | 输入、输出、复用、模拟                                                               |
+| 类型  | `GpioPull`                  | 上下拉语义          | 无上下拉、上拉、下拉                                                                |
+| 类型  | `GpioSpeed`                 | 输出速度语义         | 由平台映射到实际速度档                                                               |
+| 类型  | `GpioOutputType`            | 输出类型语义         | 推挽或开漏                                                                     |
+| 类型  | `GpioAlternate`             | 复用功能语义         | `WD_GPIO_ALTERNATE_NONE` 或 `WD_GPIO_ALTERNATE_0` 到 `WD_GPIO_ALTERNATE_15` |
+| 类型  | `GpioConfig`                | GPIO 完整配置      | 保存模式、上下拉、速度、输出类型、复用和电平                                                    |
+| Ops | `gpio_config_fn`            | 平台配置函数类型       | 形参为 `pin` 和 `GpioConfig`                                                  |
+| Ops | `gpio_write_fn`             | 平台写电平函数类型      | 形参为 `pin` 和 `level`                                                       |
+| Ops | `gpio_read_fn`              | 平台读电平函数类型      | 返回 `GpioLevel`                                                            |
+| Ops | `GpioOps`                   | 平台硬件操作集合       | `config`、`write`、`read` 都必须实现                                             |
+| 类型  | `Gpio`                      | GPIO 对象        | 保存 ops、pin 和当前配置缓存                                                        |
+| 初始化 | `gpio_init(self, ops, pin)` | 初始化 GPIO 对象    | 会配置为默认悬空输入                                                                |
+| 配置  | `gpio_config(self, config)` | 整体更新 GPIO 配置   | 调用 `ops->config`                                                          |
+| 配置  | `gpio_get_config(self)`     | 获取当前 GPIO 配置缓存 | 返回只读 `GpioConfig` 指针                                                      |
+| 读写  | `gpio_write(self, level)`   | 写 GPIO 电平      | 调用 `ops->write` 并更新缓存电平                                                   |
+| 读写  | `gpio_read(self)`           | 读 GPIO 电平      | 调用 `ops->read` 并更新缓存电平                                                    |
+| 读写  | `gpio_toggle(self)`         | 翻转 GPIO 电平     | 由 `gpio_read` 和 `gpio_write` 实现                                           |
+| 释放  | `gpio_deinit(self)`         | 恢复默认输入并清空对象    | 调用默认 `config` 后清空对象                                                       |
 
 ## 配置宏
 
@@ -57,11 +58,11 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_MODE
-#define GPIO_DEFAULT_MODE GPIO_MODE_INPUT
+#define GPIO_DEFAULT_MODE WD_GPIO_MODE_INPUT
 #endif
 ```
 
-默认值为 `GPIO_MODE_INPUT`。
+默认值为 `WD_GPIO_MODE_INPUT`。
 
 ### `GPIO_DEFAULT_PULL`
 
@@ -69,11 +70,11 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_PULL
-#define GPIO_DEFAULT_PULL GPIO_PULL_NONE
+#define GPIO_DEFAULT_PULL WD_GPIO_PULL_NONE
 #endif
 ```
 
-默认值为 `GPIO_PULL_NONE`。
+默认值为 `WD_GPIO_PULL_NONE`。
 
 ### `GPIO_DEFAULT_SPEED`
 
@@ -81,11 +82,11 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_SPEED
-#define GPIO_DEFAULT_SPEED GPIO_SPEED_LOW
+#define GPIO_DEFAULT_SPEED WD_GPIO_SPEED_LOW
 #endif
 ```
 
-默认值为 `GPIO_SPEED_LOW`。
+默认值为 `WD_GPIO_SPEED_LOW`。
 
 ### `GPIO_DEFAULT_OUTPUT_TYPE`
 
@@ -93,11 +94,11 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_OUTPUT_TYPE
-#define GPIO_DEFAULT_OUTPUT_TYPE GPIO_OUTPUT_PUSH_PULL
+#define GPIO_DEFAULT_OUTPUT_TYPE WD_GPIO_OUTPUT_PUSH_PULL
 #endif
 ```
 
-默认值为 `GPIO_OUTPUT_PUSH_PULL`。
+默认值为 `WD_GPIO_OUTPUT_PUSH_PULL`。
 
 ### `GPIO_DEFAULT_ALTERNATE`
 
@@ -105,11 +106,11 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_ALTERNATE
-#define GPIO_DEFAULT_ALTERNATE GPIO_ALTERNATE_NONE
+#define GPIO_DEFAULT_ALTERNATE WD_GPIO_ALTERNATE_NONE
 #endif
 ```
 
-默认值为 `GPIO_ALTERNATE_NONE`。
+默认值为 `WD_GPIO_ALTERNATE_NONE`。
 
 ### `GPIO_DEFAULT_LEVEL`
 
@@ -117,16 +118,16 @@ tags:
 
 ```c
 #ifndef GPIO_DEFAULT_LEVEL
-#define GPIO_DEFAULT_LEVEL GPIO_LEVEL_LOW
+#define GPIO_DEFAULT_LEVEL WD_GPIO_LEVEL_LOW
 #endif
 ```
 
-默认值为 `GPIO_LEVEL_LOW`。
+默认值为 `WD_GPIO_LEVEL_LOW`。
 
 如果需要调整默认状态，可以在包含 `gpio.h` 前定义这些宏：
 
 ```c
-#define GPIO_DEFAULT_SPEED GPIO_SPEED_MEDIUM
+#define GPIO_DEFAULT_SPEED WD_GPIO_SPEED_MEDIUM
 #include "gpio.h"
 ```
 
@@ -139,8 +140,8 @@ GPIO 电平语义。
 ```c
 typedef enum gpio_level_t
 {
-    GPIO_LEVEL_LOW = 0,
-    GPIO_LEVEL_HIGH
+    WD_GPIO_LEVEL_LOW = 0,
+    WD_GPIO_LEVEL_HIGH
 } GpioLevel;
 ```
 
@@ -153,10 +154,10 @@ GPIO 模式语义。
 ```c
 typedef enum gpio_mode_t
 {
-    GPIO_MODE_INPUT = 0,
-    GPIO_MODE_OUTPUT,
-    GPIO_MODE_ALTERNATE,
-    GPIO_MODE_ANALOG
+    WD_GPIO_MODE_INPUT = 0,
+    WD_GPIO_MODE_OUTPUT,
+    WD_GPIO_MODE_ALTERNATE,
+    WD_GPIO_MODE_ANALOG
 } GpioMode;
 ```
 
@@ -169,9 +170,9 @@ GPIO 上下拉语义。
 ```c
 typedef enum gpio_pull_t
 {
-    GPIO_PULL_NONE = 0,
-    GPIO_PULL_UP,
-    GPIO_PULL_DOWN
+    WD_GPIO_PULL_NONE = 0,
+    WD_GPIO_PULL_UP,
+    WD_GPIO_PULL_DOWN
 } GpioPull;
 ```
 
@@ -184,10 +185,10 @@ GPIO 速度语义。
 ```c
 typedef enum gpio_speed_t
 {
-    GPIO_SPEED_LOW = 0,
-    GPIO_SPEED_MEDIUM,
-    GPIO_SPEED_HIGH,
-    GPIO_SPEED_VERY_HIGH
+    WD_GPIO_SPEED_LOW = 0,
+    WD_GPIO_SPEED_MEDIUM,
+    WD_GPIO_SPEED_HIGH,
+    WD_GPIO_SPEED_VERY_HIGH
 } GpioSpeed;
 ```
 
@@ -200,8 +201,8 @@ GPIO 输出类型语义。
 ```c
 typedef enum gpio_output_type_t
 {
-    GPIO_OUTPUT_PUSH_PULL = 0,
-    GPIO_OUTPUT_OPEN_DRAIN
+    WD_GPIO_OUTPUT_PUSH_PULL = 0,
+    WD_GPIO_OUTPUT_OPEN_DRAIN
 } GpioOutputType;
 ```
 
@@ -214,15 +215,15 @@ GPIO 复用功能语义。
 ```c
 typedef enum gpio_alternate_t
 {
-    GPIO_ALTERNATE_NONE = 0,
-    GPIO_ALTERNATE_0,
-    GPIO_ALTERNATE_1,
+    WD_GPIO_ALTERNATE_NONE = 0,
+    WD_GPIO_ALTERNATE_0,
+    WD_GPIO_ALTERNATE_1,
     /* ... */
-    GPIO_ALTERNATE_15
+    WD_GPIO_ALTERNATE_15
 } GpioAlternate;
 ```
 
-`GPIO_ALTERNATE_NONE` 表示不使用复用功能。`GPIO_ALTERNATE_0` 到 `GPIO_ALTERNATE_15` 对应通用复用编号，平台层负责映射到具体芯片。
+`WD_GPIO_ALTERNATE_NONE` 表示不使用复用功能。`WD_GPIO_ALTERNATE_0` 到 `WD_GPIO_ALTERNATE_15` 对应通用复用编号，平台层负责映射到具体芯片。
 
 ### `GpioConfig`
 
@@ -286,7 +287,7 @@ typedef void (*gpio_config_fn)(size_t pin, const GpioConfig* config);
 
 该函数由具体平台实现，负责把 `GpioConfig` 映射到芯片 SDK 或寄存器配置。
 
-该函数是必选 ops。`gpio_init`、`gpio_config`、`gpio_set_*` 和 `gpio_deinit` 都会使用它。
+该函数是必选 ops。`gpio_init`、`gpio_config` 和 `gpio_deinit` 都会使用它。
 
 ### `gpio_write_fn`
 
@@ -308,7 +309,7 @@ typedef void (*gpio_write_fn)(size_t pin, GpioLevel level);
 typedef GpioLevel (*gpio_read_fn)(size_t pin);
 ```
 
-该函数必须返回 `GPIO_LEVEL_LOW` 或 `GPIO_LEVEL_HIGH`。
+该函数必须返回 `WD_GPIO_LEVEL_LOW` 或 `WD_GPIO_LEVEL_HIGH`。
 
 该函数是必选 ops。`gpio_read` 和 `gpio_toggle` 会使用它。
 
@@ -378,12 +379,12 @@ void gpio_config(Gpio* self, const GpioConfig* config);
 ```c
 GpioConfig config;
 
-config.mode = GPIO_MODE_OUTPUT;
-config.pull = GPIO_PULL_NONE;
-config.speed = GPIO_SPEED_LOW;
-config.output_type = GPIO_OUTPUT_PUSH_PULL;
-config.alternate = GPIO_ALTERNATE_NONE;
-config.level = GPIO_LEVEL_LOW;
+config.mode = WD_GPIO_MODE_OUTPUT;
+config.pull = WD_GPIO_PULL_NONE;
+config.speed = WD_GPIO_SPEED_LOW;
+config.output_type = WD_GPIO_OUTPUT_PUSH_PULL;
+config.alternate = WD_GPIO_ALTERNATE_NONE;
+config.level = WD_GPIO_LEVEL_LOW;
 
 gpio_config(&led, &config);
 ```
@@ -392,6 +393,23 @@ gpio_config(&led, &config);
 
 `self`、`self->ops`、`self->ops->config` 和 `config` 必须有效。`config` 中的枚举值必须属于 `gpio.h` 定义的范围，否则触发 `ASSERT`。
 
+
+### `gpio_get_config(self)`
+
+获取当前 GPIO 配置缓存。
+
+```c
+const GpioConfig* gpio_get_config(const Gpio* self);
+```
+
+示例：
+
+```c
+const GpioConfig* config = gpio_get_config(&led);
+```
+
+该函数返回 `self->config` 的只读指针，不会重新读取硬件，也不会调用 `ops->config` 或 `ops->read`。如果需要让缓存中的 `level` 与硬件输入状态同步，应先调用 `gpio_read`，再调用 `gpio_get_config`。
+`self`、`self->ops`、`self->ops->config`、`self->ops->write` 和 `self->ops->read` 必须有效，否则触发 `ASSERT`。
 
 ## 读写接口
 
@@ -406,7 +424,7 @@ void gpio_write(Gpio* self, GpioLevel level);
 示例：
 
 ```c
-gpio_write(&led, GPIO_LEVEL_HIGH);
+gpio_write(&led, WD_GPIO_LEVEL_HIGH);
 ```
 
 该函数会更新 `self->config.level`，然后调用 `ops->write(self->pin, level)`。
@@ -479,16 +497,16 @@ static void board_gpio_config(size_t pin, const GpioConfig* config)
 
     switch (config->mode)
     {
-    case GPIO_MODE_INPUT:
+    case WD_GPIO_MODE_INPUT:
         /* map to chip input mode */
         break;
-    case GPIO_MODE_OUTPUT:
+    case WD_GPIO_MODE_OUTPUT:
         /* map to chip output mode */
         break;
-    case GPIO_MODE_ALTERNATE:
+    case WD_GPIO_MODE_ALTERNATE:
         /* map to chip alternate mode */
         break;
-    case GPIO_MODE_ANALOG:
+    case WD_GPIO_MODE_ANALOG:
         /* map to chip analog mode */
         break;
     default:
@@ -537,18 +555,21 @@ int main(void)
 {
     Gpio led;
     GpioConfig config;
+    const GpioConfig* current_config;
 
     gpio_init(&led, &led_ops, 13);
 
-    config.mode = GPIO_MODE_OUTPUT;
-    config.pull = GPIO_PULL_NONE;
-    config.speed = GPIO_SPEED_LOW;
-    config.output_type = GPIO_OUTPUT_PUSH_PULL;
-    config.alternate = GPIO_ALTERNATE_NONE;
-    config.level = GPIO_LEVEL_LOW;
+    config.mode = WD_GPIO_MODE_OUTPUT;
+    config.pull = WD_GPIO_PULL_NONE;
+    config.speed = WD_GPIO_SPEED_LOW;
+    config.output_type = WD_GPIO_OUTPUT_PUSH_PULL;
+    config.alternate = WD_GPIO_ALTERNATE_NONE;
+    config.level = WD_GPIO_LEVEL_LOW;
     gpio_config(&led, &config);
+    current_config = gpio_get_config(&led);
+    (void)current_config;
 
-    gpio_write(&led, GPIO_LEVEL_HIGH);
+    gpio_write(&led, WD_GPIO_LEVEL_HIGH);
     gpio_toggle(&led);
     gpio_deinit(&led);
 
@@ -574,7 +595,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\gpio\gpio.
 
 - `gpio_init` 会调用一次默认 `config`。
 - `gpio_config` 会复制传入配置并调用 `ops->config`。
-- `gpio_set_*` 会保留其他字段，只修改目标字段。
+- `gpio_get_config` 会返回当前缓存配置，且不会额外调用任何 ops。
 - `gpio_toggle` 只通过 `read` 和 `write` 实现。
 - `gpio_deinit` 会先恢复默认配置，再清空对象。
 
