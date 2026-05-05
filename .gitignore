@@ -71,8 +71,27 @@ coverage/
 *~
 
 # Keil uVision generated files
+*.uvgui.*
 *.uvguix.*
-*.build_log.htm
+*.uvopt
+*.uvoptx
+*.uvgui
+*.uvguix
+*.uvmpw
+*.uvbak
+*.bak
+*.dep
+JLinkLog.txt
+JLinkSettings.ini
+**/MDK-ARM/**/*.axf
+**/MDK-ARM/**/*.build_log.htm
+**/MDK-ARM/**/*.crf
+**/MDK-ARM/**/*.htm
+**/MDK-ARM/**/*.iex
+**/MDK-ARM/**/*.lnp
+**/MDK-ARM/**/*.sct
+**/MDK-ARM/**/Listings/
+**/MDK-ARM/**/Objects/
 
 # OS generated files
 .DS_Store
@@ -83,4 +102,3 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
-*.dep
