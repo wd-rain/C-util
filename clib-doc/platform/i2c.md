@@ -25,9 +25,9 @@ tags:
 
 `[[i2c]] -> [[gpio]] -> [[until]]`
 
-`i2c` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[gpio]]`，用于可选绑定 SCL/SDA 引脚生命周期；`[[until]]` 由 `gpio` 间接引入，其中的 `ASSERT` 用于空指针、缺失 ops、非法地址和非法配置检查。
+`i2c` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[gpio]]`，用于可选绑定 SCL/SDA 引脚生命周期；`[[until]]` 由 `gpio` 间接引入，其中的 `WD_ASSERT` 用于空指针、缺失 ops、非法地址和非法配置检查。
 
-和 `[[gpio]]` 不同，I2C 的 NACK、超时、总线忙等情况属于正常运行期结果，因此通过 `I2cStatus` 返回；空对象、空 `ops`、缺失函数指针、非法地址和非法枚举值仍属于编程错误，会触发 `ASSERT`。
+和 `[[gpio]]` 不同，I2C 的 NACK、超时、总线忙等情况属于正常运行期结果，因此通过 `I2cStatus` 返回；空对象、空 `ops`、缺失函数指针、非法地址和非法枚举值仍属于编程错误，会触发 `WD_ASSERT`。
 
 ## 接口总览
 
@@ -144,7 +144,7 @@ typedef enum i2c_status_t
 | `WD_I2C_STATUS_ARBITRATION_LOST` | 仲裁丢失 |
 | `WD_I2C_STATUS_OVERFLOW` | 输出容量不足，例如扫描结果数组已满 |
 
-平台 ops 返回值必须是这些值之一，否则 API 层会触发 `ASSERT`。
+平台 ops 返回值必须是这些值之一，否则 API 层会触发 `WD_ASSERT`。
 
 ### `I2cMemAddressSize`
 
@@ -231,7 +231,7 @@ typedef struct i2c_t
 
 ## Ops接口
 
-本节说明具体平台必须实现的硬件操作接口。当前 I2C 模块要求 `I2cOps` 中的 `config`、`write`、`read`、`mem_write`、`mem_read` 和 `deinit` 全部实现；实现文件会在初始化和使用对应 ops 前执行 `ASSERT` 检查，函数指针为空会直接卡死在断言处。
+本节说明具体平台必须实现的硬件操作接口。当前 I2C 模块要求 `I2cOps` 中的 `config`、`write`、`read`、`mem_write`、`mem_read` 和 `deinit` 全部实现；实现文件会在初始化和使用对应 ops 前执行 `WD_ASSERT` 检查，函数指针为空会直接卡死在断言处。
 
 ### `i2c_config_fn`
 
@@ -355,7 +355,7 @@ i2c_init(&i2c, &board_i2c_ops, 0, &config, NULL);
 - 如果 I2C 控制器初始化成功，缓存 `config`。
 - 如果 I2C 控制器初始化失败，回滚已经初始化的 SCL/SDA，并清空对象。
 
-`self`、`ops`、`config` 和 `ops` 中所有函数指针必须有效，否则触发 `ASSERT`。`gpio_cfg == NULL` 表示不绑定 GPIO。
+`self`、`ops`、`config` 和 `ops` 中所有函数指针必须有效，否则触发 `WD_ASSERT`。`gpio_cfg == NULL` 表示不绑定 GPIO。
 
 ## 配置接口
 
@@ -515,8 +515,8 @@ i2c_deinit(&i2c);
 ```c
 static I2cStatus board_i2c_write(size_t bus, uint8_t address, const uint8_t* data, size_t len, uint32_t timeout_ms)
 {
-    ASSERT(address <= I2C_ADDRESS_MAX);
-    ASSERT(data != NULL || len == 0U);
+    WD_ASSERT(address <= I2C_ADDRESS_MAX);
+    WD_ASSERT(data != NULL || len == 0U);
 
     if (len == 0U)
     {
@@ -543,7 +543,7 @@ static I2cStatus board_i2c_write(size_t bus, uint8_t address, const uint8_t* dat
 static I2cStatus mock_i2c_config(size_t bus, const I2cConfig* config)
 {
     (void)bus;
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
     return WD_I2C_STATUS_OK;
 }
 
@@ -652,7 +652,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\i2c\i2c.c
 ## 通用注意事项
 
 > [!warning]
-> `i2c` 使用 `ASSERT` 暴露编程错误，并使用 `I2cStatus` 表达运行期 I2C 结果。空指针、缺失 ops、非法地址、非法配置会直接卡死在断言处；NACK、超时、忙等结果由状态码返回。
+> `i2c` 使用 `WD_ASSERT` 暴露编程错误，并使用 `I2cStatus` 表达运行期 I2C 结果。空指针、缺失 ops、非法地址、非法配置会直接卡死在断言处；NACK、超时、忙等结果由状态码返回。
 
 - `i2c` 不分配堆内存，`I2c` 对象由调用者提供。
 - `I2cOps` 中的 `config`、`write`、`read`、`mem_write`、`mem_read` 和 `deinit` 都是必选函数指针，不应留空。

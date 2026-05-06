@@ -3,7 +3,7 @@
 
 static void _bsp_gpio_assert_port(BspGpioPort port)
 {
-    ASSERT(port <= WD_BSP_GPIO_PORT_I);
+    WD_ASSERT(port <= WD_BSP_GPIO_PORT_I);
 }
 
 static GPIO_TypeDef *_bsp_gpio_port(size_t pin)
@@ -23,7 +23,7 @@ static GPIO_TypeDef *_bsp_gpio_port(size_t pin)
 
     port = bsp_gpio_pin_port(pin);
     _bsp_gpio_assert_port(port);
-    ASSERT((size_t)port < (sizeof(ports) / sizeof(ports[0])));
+    WD_ASSERT((size_t)port < (sizeof(ports) / sizeof(ports[0])));
 
     return ports[port];
 }
@@ -72,7 +72,7 @@ static void _bsp_gpio_enable_clock(size_t pin)
         __HAL_RCC_GPIOI_CLK_ENABLE();
         break;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -92,7 +92,7 @@ static GpioConfig _bsp_gpio_base_config(void)
 
 static uint32_t _bsp_gpio_hal_mode(const GpioConfig *config)
 {
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 
     switch (config->mode)
     {
@@ -105,7 +105,7 @@ static uint32_t _bsp_gpio_hal_mode(const GpioConfig *config)
     case WD_GPIO_MODE_ANALOG:
         return GPIO_MODE_ANALOG;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -120,7 +120,7 @@ static uint32_t _bsp_gpio_hal_pull(GpioPull pull)
     case WD_GPIO_PULL_DOWN:
         return GPIO_PULLDOWN;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -137,13 +137,13 @@ static uint32_t _bsp_gpio_hal_speed(GpioSpeed speed)
     case WD_GPIO_SPEED_VERY_HIGH:
         return GPIO_SPEED_FREQ_VERY_HIGH;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
 static uint32_t _bsp_gpio_hal_alternate(GpioAlternate alternate)
 {
-    ASSERT(alternate <= WD_GPIO_ALTERNATE_15);
+    WD_ASSERT(alternate <= WD_GPIO_ALTERNATE_15);
 
     if (alternate == WD_GPIO_ALTERNATE_NONE)
     {
@@ -157,7 +157,7 @@ static void _bsp_gpio_config(size_t pin, const GpioConfig *config)
 {
     GPIO_InitTypeDef init;
 
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 
     _bsp_gpio_enable_clock(pin);
 
@@ -211,7 +211,7 @@ size_t bsp_gpio_pin_index(BspGpioPin pin)
     size_t index;
 
     index = pin & BSP_GPIO_PIN_INDEX_MASK;
-    ASSERT(index <= 15U);
+    WD_ASSERT(index <= 15U);
 
     return index;
 }

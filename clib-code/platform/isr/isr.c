@@ -2,26 +2,26 @@
 
 static void _isr_assert_ops(const IsrOps *ops)
 {
-    ASSERT(ops != NULL);
-    ASSERT(ops->pending != NULL);
+    WD_ASSERT(ops != NULL);
+    WD_ASSERT(ops->pending != NULL);
 }
 
 static void _isr_assert_ready(const Isr *self)
 {
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _isr_assert_ops(self->ops);
 }
 
 static void _isr_assert_enable_ready(const Isr *self)
 {
     _isr_assert_ready(self);
-    ASSERT(self->ops->enable != NULL);
+    WD_ASSERT(self->ops->enable != NULL);
 }
 
 static void _isr_assert_disable_ready(const Isr *self)
 {
     _isr_assert_ready(self);
-    ASSERT(self->ops->disable != NULL);
+    WD_ASSERT(self->ops->disable != NULL);
 }
 
 static void _isr_clear(Isr *self)
@@ -33,7 +33,7 @@ static void _isr_clear(Isr *self)
 
 void isr_init(Isr *self, const IsrOps *ops, size_t source, isr_action_fn action)
 {
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _isr_assert_ops(ops);
 
     self->ops = ops;

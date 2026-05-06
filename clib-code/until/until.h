@@ -1,72 +1,74 @@
 #ifndef _UNTIL_H_
 #define _UNTIL_H_
 
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
+#include <stddef.h>
+
+#ifndef WD_MIN
+#define WD_MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-#ifndef max
-#define max(a, b) ((a) > (b) ? (a) : (b))
+#ifndef WD_MAX
+#define WD_MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-#ifndef constrain
-#define constrain(x, a, b) max(a, min(b, x))
+#ifndef WD_CONSTRAIN
+#define WD_CONSTRAIN(x, a, b) WD_MAX(a, WD_MIN(b, x))
 #endif
 
-#ifndef linear_map
-#define linear_map(x, x1, x2, y1, y2) constrain(((y1) + ((x) - (x1)) * ((y2) - (y1)) / ((x2) - (x1))), y1, y2)
+#ifndef WD_LINEAR_MAP
+#define WD_LINEAR_MAP(x, x1, x2, y1, y2) WD_CONSTRAIN(((y1) + ((x) - (x1)) * ((y2) - (y1)) / ((x2) - (x1))), y1, y2)
 #endif
 
-#ifndef BIT
-#define BIT(n) (1U << (n))
+#ifndef WD_BIT
+#define WD_BIT(n) (1U << (n))
 #endif
 
-#ifndef SET_BIT
-#define SET_BIT(x, n) ((x) |= BIT(n))
+#ifndef WD_BIT_SET
+#define WD_BIT_SET(x, n) ((x) |= WD_BIT(n))
 #endif
 
-#ifndef CLEAR_BIT
-#define CLEAR_BIT(x, n) ((x) &= ~BIT(n))
+#ifndef WD_BIT_CLEAR
+#define WD_BIT_CLEAR(x, n) ((x) &= ~WD_BIT(n))
 #endif
 
-#ifndef TOGGLE_BIT
-#define TOGGLE_BIT(x, n) ((x) ^= BIT(n))
+#ifndef WD_BIT_TOGGLE
+#define WD_BIT_TOGGLE(x, n) ((x) ^= WD_BIT(n))
 #endif
 
-#ifndef READ_BIT
-#define READ_BIT(x, n) (((x) >> (n)) & 1U)
+#ifndef WD_BIT_READ
+#define WD_BIT_READ(x, n) (((x) >> (n)) & 1U)
 #endif
 
-#ifndef REG_SET
-#define REG_SET(x, cmark, smark) ((x) = ((x) & ~(cmark)) | (smark))
+#ifndef WD_REG_SET
+#define WD_REG_SET(x, cmark, smark) ((x) = ((x) & ~(cmark)) | (smark))
 #endif
 
-#ifndef OFFSETOF
-#define OFFSETOF(type, member) ((unsigned long)&(((type *)0)->member))
+#ifndef WD_OFFSETOF
+#define WD_OFFSETOF(type, member) offsetof(type, member)
 #endif
 
-#ifndef CONTAINER_OF
-#define CONTAINER_OF(ptr, type, member) ((type *)((char *)(ptr) - OFFSETOF(type, member)))
+#ifndef WD_CONTAINER_OF
+#define WD_CONTAINER_OF(ptr, type, member) ((type *)((char *)(ptr) - WD_OFFSETOF(type, member)))
 #endif
 
-#ifndef _STRINGIFY
-#define _STRINGIFY(x) #x
+#ifndef WD_STRINGIFY_IMPL
+#define WD_STRINGIFY_IMPL(x) #x
 #endif
 
-#ifndef STRINGIFY
-#define STRINGIFY(x) _STRINGIFY(x)
+#ifndef WD_STRINGIFY
+#define WD_STRINGIFY(x) WD_STRINGIFY_IMPL(x)
 #endif
 
-#ifndef _CONCAT
-#define _CONCAT(a, b) a##b
+#ifndef WD_CONCAT_IMPL
+#define WD_CONCAT_IMPL(a, b) a##b
 #endif
 
-#ifndef CONCAT
-#define CONCAT(a, b) _CONCAT(a, b)
+#ifndef WD_CONCAT
+#define WD_CONCAT(a, b) WD_CONCAT_IMPL(a, b)
 #endif
 
-#ifndef ASSERT
-#define ASSERT(expr)                                                                                           \
+#ifndef WD_ASSERT
+#define WD_ASSERT(expr)                                                                                        \
     do                                                                                                          \
     {                                                                                                           \
         if (!(expr))                                                                                            \
@@ -79,159 +81,159 @@
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
-#ifndef WEAK
-#define WEAK         __attribute__((weak))
+#ifndef WD_WEAK
+#define WD_WEAK         __attribute__((weak))
 #endif
-#ifndef UNUSED
-#define UNUSED       __attribute__((unused))
+#ifndef WD_UNUSED
+#define WD_UNUSED       __attribute__((unused))
 #endif
-#ifndef PACKED
-#define PACKED       __attribute__((packed))
+#ifndef WD_PACKED
+#define WD_PACKED       __attribute__((packed))
 #endif
-#ifndef INLINE
-#define INLINE       static inline __attribute__((always_inline))
+#ifndef WD_INLINE
+#define WD_INLINE       static inline __attribute__((always_inline))
 #endif
-#ifndef NORETURN
-#define NORETURN     __attribute__((noreturn))
+#ifndef WD_NORETURN
+#define WD_NORETURN     __attribute__((noreturn))
 #endif
-#ifndef DEPRECATED
-#define DEPRECATED   __attribute__((deprecated))
+#ifndef WD_DEPRECATED
+#define WD_DEPRECATED   __attribute__((deprecated))
 #endif
-#ifndef ALIGNED
-#define ALIGNED(n)   __attribute__((aligned(n)))
+#ifndef WD_ALIGNED
+#define WD_ALIGNED(n)   __attribute__((aligned(n)))
 #endif
-#ifndef SECTION
-#define SECTION(s)   __attribute__((section(s)))
+#ifndef WD_SECTION
+#define WD_SECTION(s)   __attribute__((section(s)))
 #endif
-#ifndef LIKELY
-#define LIKELY(x)    __builtin_expect(!!(x), 1)
+#ifndef WD_LIKELY
+#define WD_LIKELY(x)    __builtin_expect(!!(x), 1)
 #endif
-#ifndef UNLIKELY
-#define UNLIKELY(x)  __builtin_expect(!!(x), 0)
+#ifndef WD_UNLIKELY
+#define WD_UNLIKELY(x)  __builtin_expect(!!(x), 0)
 #endif
 #elif defined(__CC_ARM)
-#ifndef WEAK
-#define WEAK         __attribute__((weak))
+#ifndef WD_WEAK
+#define WD_WEAK         __attribute__((weak))
 #endif
-#ifndef UNUSED
-#define UNUSED       __attribute__((unused))
+#ifndef WD_UNUSED
+#define WD_UNUSED       __attribute__((unused))
 #endif
-#ifndef PACKED
-#define PACKED       __attribute__((packed))
+#ifndef WD_PACKED
+#define WD_PACKED       __attribute__((packed))
 #endif
-#ifndef INLINE
-#define INLINE       static __forceinline
+#ifndef WD_INLINE
+#define WD_INLINE       static __forceinline
 #endif
-#ifndef NORETURN
-#define NORETURN     __attribute__((noreturn))
+#ifndef WD_NORETURN
+#define WD_NORETURN     __attribute__((noreturn))
 #endif
-#ifndef DEPRECATED
-#define DEPRECATED   __attribute__((deprecated))
+#ifndef WD_DEPRECATED
+#define WD_DEPRECATED   __attribute__((deprecated))
 #endif
-#ifndef ALIGNED
-#define ALIGNED(n)   __attribute__((aligned(n)))
+#ifndef WD_ALIGNED
+#define WD_ALIGNED(n)   __attribute__((aligned(n)))
 #endif
-#ifndef SECTION
-#define SECTION(s)   __attribute__((section(s)))
+#ifndef WD_SECTION
+#define WD_SECTION(s)   __attribute__((section(s)))
 #endif
-#ifndef LIKELY
-#define LIKELY(x)    (x)
+#ifndef WD_LIKELY
+#define WD_LIKELY(x)    (x)
 #endif
-#ifndef UNLIKELY
-#define UNLIKELY(x)  (x)
+#ifndef WD_UNLIKELY
+#define WD_UNLIKELY(x)  (x)
 #endif
 #elif defined(__ICCARM__)
-#ifndef WEAK
-#define WEAK         __weak
+#ifndef WD_WEAK
+#define WD_WEAK         __weak
 #endif
-#ifndef UNUSED
-#define UNUSED
+#ifndef WD_UNUSED
+#define WD_UNUSED
 #endif
-#ifndef PACKED
-#define PACKED       __packed
+#ifndef WD_PACKED
+#define WD_PACKED       __packed
 #endif
-#ifndef INLINE
-#define INLINE       static inline
+#ifndef WD_INLINE
+#define WD_INLINE       static inline
 #endif
-#ifndef NORETURN
-#define NORETURN     __noreturn
+#ifndef WD_NORETURN
+#define WD_NORETURN     __noreturn
 #endif
-#ifndef DEPRECATED
-#define DEPRECATED
+#ifndef WD_DEPRECATED
+#define WD_DEPRECATED
 #endif
-#ifndef ALIGNED
-#define ALIGNED(n)   _Pragma(STRINGIFY(data_alignment=n))
+#ifndef WD_ALIGNED
+#define WD_ALIGNED(n)   _Pragma(WD_STRINGIFY(data_alignment=n))
 #endif
-#ifndef SECTION
-#define SECTION(s)
+#ifndef WD_SECTION
+#define WD_SECTION(s)
 #endif
-#ifndef LIKELY
-#define LIKELY(x)    (x)
+#ifndef WD_LIKELY
+#define WD_LIKELY(x)    (x)
 #endif
-#ifndef UNLIKELY
-#define UNLIKELY(x)  (x)
+#ifndef WD_UNLIKELY
+#define WD_UNLIKELY(x)  (x)
 #endif
 #elif defined(_MSC_VER)
-#ifndef WEAK
-#define WEAK         __declspec(selectany)
+#ifndef WD_WEAK
+#define WD_WEAK         __declspec(selectany)
 #endif
-#ifndef UNUSED
-#define UNUSED
+#ifndef WD_UNUSED
+#define WD_UNUSED
 #endif
-#ifndef PACKED
-#define PACKED
+#ifndef WD_PACKED
+#define WD_PACKED
 #endif
-#ifndef INLINE
-#define INLINE       __forceinline
+#ifndef WD_INLINE
+#define WD_INLINE       __forceinline
 #endif
-#ifndef NORETURN
-#define NORETURN     __declspec(noreturn)
+#ifndef WD_NORETURN
+#define WD_NORETURN     __declspec(noreturn)
 #endif
-#ifndef DEPRECATED
-#define DEPRECATED   __declspec(deprecated)
+#ifndef WD_DEPRECATED
+#define WD_DEPRECATED   __declspec(deprecated)
 #endif
-#ifndef ALIGNED
-#define ALIGNED(n)   __declspec(align(n))
+#ifndef WD_ALIGNED
+#define WD_ALIGNED(n)   __declspec(align(n))
 #endif
-#ifndef SECTION
-#define SECTION(s)   __declspec(allocate(s))
+#ifndef WD_SECTION
+#define WD_SECTION(s)   __declspec(allocate(s))
 #endif
-#ifndef LIKELY
-#define LIKELY(x)    (x)
+#ifndef WD_LIKELY
+#define WD_LIKELY(x)    (x)
 #endif
-#ifndef UNLIKELY
-#define UNLIKELY(x)  (x)
+#ifndef WD_UNLIKELY
+#define WD_UNLIKELY(x)  (x)
 #endif
 #else
-#ifndef WEAK
-#define WEAK
+#ifndef WD_WEAK
+#define WD_WEAK
 #endif
-#ifndef UNUSED
-#define UNUSED
+#ifndef WD_UNUSED
+#define WD_UNUSED
 #endif
-#ifndef PACKED
-#define PACKED
+#ifndef WD_PACKED
+#define WD_PACKED
 #endif
-#ifndef INLINE
-#define INLINE       static inline
+#ifndef WD_INLINE
+#define WD_INLINE       static inline
 #endif
-#ifndef NORETURN
-#define NORETURN
+#ifndef WD_NORETURN
+#define WD_NORETURN
 #endif
-#ifndef DEPRECATED
-#define DEPRECATED
+#ifndef WD_DEPRECATED
+#define WD_DEPRECATED
 #endif
-#ifndef ALIGNED
-#define ALIGNED(n)
+#ifndef WD_ALIGNED
+#define WD_ALIGNED(n)
 #endif
-#ifndef SECTION
-#define SECTION(s)
+#ifndef WD_SECTION
+#define WD_SECTION(s)
 #endif
-#ifndef LIKELY
-#define LIKELY(x)    (x)
+#ifndef WD_LIKELY
+#define WD_LIKELY(x)    (x)
 #endif
-#ifndef UNLIKELY
-#define UNLIKELY(x)  (x)
+#ifndef WD_UNLIKELY
+#define WD_UNLIKELY(x)  (x)
 #endif
 #endif
 #endif

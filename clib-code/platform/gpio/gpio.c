@@ -2,18 +2,18 @@
 
 static void _gpio_assert_config(const GpioConfig *config)
 {
-    ASSERT(config != NULL);
-    ASSERT(config->mode <= WD_GPIO_MODE_ANALOG);
-    ASSERT(config->pull <= WD_GPIO_PULL_DOWN);
-    ASSERT(config->speed <= WD_GPIO_SPEED_VERY_HIGH);
-    ASSERT(config->output_type <= WD_GPIO_OUTPUT_OPEN_DRAIN);
-    ASSERT(config->alternate <= WD_GPIO_ALTERNATE_15);
-    ASSERT(config->level <= WD_GPIO_LEVEL_HIGH);
+    WD_ASSERT(config != NULL);
+    WD_ASSERT(config->mode <= WD_GPIO_MODE_ANALOG);
+    WD_ASSERT(config->pull <= WD_GPIO_PULL_DOWN);
+    WD_ASSERT(config->speed <= WD_GPIO_SPEED_VERY_HIGH);
+    WD_ASSERT(config->output_type <= WD_GPIO_OUTPUT_OPEN_DRAIN);
+    WD_ASSERT(config->alternate <= WD_GPIO_ALTERNATE_15);
+    WD_ASSERT(config->level <= WD_GPIO_LEVEL_HIGH);
 }
 
 static void _gpio_assert_level(GpioLevel level)
 {
-    ASSERT(level <= WD_GPIO_LEVEL_HIGH);
+    WD_ASSERT(level <= WD_GPIO_LEVEL_HIGH);
 }
 
 static GpioConfig _gpio_default_config(void)
@@ -33,15 +33,15 @@ static GpioConfig _gpio_default_config(void)
 
 static void _gpio_assert_ops(const GpioOps *ops)
 {
-    ASSERT(ops != NULL);
-    ASSERT(ops->config != NULL);
-    ASSERT(ops->write != NULL);
-    ASSERT(ops->read != NULL);
+    WD_ASSERT(ops != NULL);
+    WD_ASSERT(ops->config != NULL);
+    WD_ASSERT(ops->write != NULL);
+    WD_ASSERT(ops->read != NULL);
 }
 
 static void _gpio_assert_ready(const Gpio *self)
 {
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _gpio_assert_ops(self->ops);
 }
 
@@ -58,7 +58,7 @@ static void _gpio_config_checked(Gpio *self, const GpioConfig *config)
 
 void gpio_init(Gpio *self, const GpioOps *ops, size_t pin)
 {
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _gpio_assert_ops(ops);
 
     self->ops = ops;

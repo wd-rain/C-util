@@ -3,26 +3,26 @@
 
 static void _bsp_i2c_assert_bus(size_t bus)
 {
-    ASSERT(bus < (size_t)WD_BSP_I2C_BUS_COUNT);
+    WD_ASSERT(bus < (size_t)WD_BSP_I2C_BUS_COUNT);
 }
 
 static void _bsp_i2c_assert_config(const I2cConfig *config)
 {
-    ASSERT(config != NULL);
-    ASSERT(config->clock_hz > 0U);
-    ASSERT(config->clock_hz <= 400000U);
+    WD_ASSERT(config != NULL);
+    WD_ASSERT(config->clock_hz > 0U);
+    WD_ASSERT(config->clock_hz <= 400000U);
 }
 
 static void _bsp_i2c_assert_transfer(uint8_t address, const void *data, size_t len)
 {
-    ASSERT(address <= I2C_ADDRESS_MAX);
-    ASSERT(data != NULL || len == 0U);
-    ASSERT(len <= UINT16_MAX);
+    WD_ASSERT(address <= I2C_ADDRESS_MAX);
+    WD_ASSERT(data != NULL || len == 0U);
+    WD_ASSERT(len <= UINT16_MAX);
 }
 
 static void _bsp_i2c_assert_mem_address_size(I2cMemAddressSize mem_address_size)
 {
-    ASSERT(mem_address_size <= WD_I2C_MEM_ADDRESS_SIZE_16BIT);
+    WD_ASSERT(mem_address_size <= WD_I2C_MEM_ADDRESS_SIZE_16BIT);
 }
 
 static I2C_TypeDef *_bsp_i2c_instance(size_t bus)
@@ -61,7 +61,7 @@ static void _bsp_i2c_enable_clock(size_t bus)
         __HAL_RCC_I2C3_CLK_ENABLE();
         break;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -81,13 +81,13 @@ static void _bsp_i2c_disable_clock(size_t bus)
         __HAL_RCC_I2C3_CLK_DISABLE();
         break;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
 static uint16_t _bsp_i2c_hal_address(uint8_t address)
 {
-    ASSERT(address <= I2C_ADDRESS_MAX);
+    WD_ASSERT(address <= I2C_ADDRESS_MAX);
 
     return (uint16_t)((uint16_t)address << 1U);
 }
@@ -103,7 +103,7 @@ static uint16_t _bsp_i2c_hal_mem_address_size(I2cMemAddressSize mem_address_size
     case WD_I2C_MEM_ADDRESS_SIZE_16BIT:
         return I2C_MEMADD_SIZE_16BIT;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -134,7 +134,7 @@ static I2cStatus _bsp_i2c_error_status(uint32_t error_code)
 
 static I2cStatus _bsp_i2c_status(const I2C_HandleTypeDef *handle, HAL_StatusTypeDef status)
 {
-    ASSERT(handle != NULL);
+    WD_ASSERT(handle != NULL);
 
     switch (status)
     {
@@ -147,7 +147,7 @@ static I2cStatus _bsp_i2c_status(const I2C_HandleTypeDef *handle, HAL_StatusType
     case HAL_TIMEOUT:
         return WD_I2C_STATUS_TIMEOUT;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -155,8 +155,8 @@ static I2cStatus _bsp_i2c_probe(I2C_HandleTypeDef *handle, uint8_t address, uint
 {
     HAL_StatusTypeDef status;
 
-    ASSERT(handle != NULL);
-    ASSERT(address <= I2C_ADDRESS_MAX);
+    WD_ASSERT(handle != NULL);
+    WD_ASSERT(address <= I2C_ADDRESS_MAX);
 
     status = HAL_I2C_Master_Transmit(handle, _bsp_i2c_hal_address(address), NULL, 0U, timeout_ms);
     return _bsp_i2c_status(handle, status);
@@ -286,7 +286,7 @@ static size_t _bsp_i2c_scl_pin(size_t bus)
     case WD_BSP_I2C_BUS_3:
         return BSP_I2C3_SCL_PIN;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -303,7 +303,7 @@ static size_t _bsp_i2c_sda_pin(size_t bus)
     case WD_BSP_I2C_BUS_3:
         return BSP_I2C3_SDA_PIN;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
     }
 }
 
@@ -325,7 +325,7 @@ void bsp_i2c_default_gpio_config(size_t bus, I2cGpioConfig *config)
 {
     GpioConfig pin_config;
 
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
     _bsp_i2c_assert_bus(bus);
 
     pin_config = _bsp_i2c_default_pin_config();

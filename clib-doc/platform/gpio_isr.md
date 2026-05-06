@@ -298,7 +298,7 @@ void gpio_isr_deinit(GpioIsr *self);
 ```c
 static void board_gpio_isr_config(size_t pin, const GpioIsrConfig *config)
 {
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 
     switch (config->trigger)
     {
@@ -312,7 +312,7 @@ static void board_gpio_isr_config(size_t pin, const GpioIsrConfig *config)
         /* map to both edges */
         break;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
         break;
     }
 
@@ -336,7 +336,7 @@ static GpioIsr button_isr;
 static void mock_gpio_config(size_t pin, const GpioConfig *config)
 {
     (void)pin;
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 }
 
 static void mock_gpio_write(size_t pin, GpioLevel level)
@@ -354,7 +354,7 @@ static GpioLevel mock_gpio_read(size_t pin)
 static void mock_gpio_isr_config(size_t pin, const GpioIsrConfig *config)
 {
     (void)pin;
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 }
 
 static void mock_gpio_isr_enable(size_t pin)
@@ -457,7 +457,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\isr\isr.c 
 ## 通用注意事项
 
 > [!warning]
-> `gpio_isr` 使用 `ASSERT` 暴露编程错误，不返回状态码。空对象、空 `gpio`、空 `ops`、缺失 `config`、缺失 `pending` 或非法 trigger 会直接卡死在断言处。
+> `gpio_isr` 使用 `WD_ASSERT` 暴露编程错误，不返回状态码。空对象、空 `gpio`、空 `ops`、缺失 `config`、缺失 `pending` 或非法 trigger 会直接卡死在断言处。
 
 - GPIO 中断能力不进入 `GpioOps`，应使用独立 `GpioIsrOps`。
 - `GpioIsr` 不缓存 `level`、`timestamp` 或 `config`。

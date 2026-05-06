@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../User/BSP;../User/APP;../../clib-code;../../clib-code/platform/example/STM32F407ZGT6/gpio;../../clib-code/platform/example/STM32F407ZGT6/i2c;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../User/BSP;../User/APP;../User/OS;../../clib-code;../../clib-code/os/timer;../../clib-code/platform/example/STM32F407ZGT6/gpio;../../clib-code/platform/example/STM32F407ZGT6/i2c;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -467,6 +467,16 @@
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../clib-code/platform/i2c/i2c.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>clib-code/os</GroupName>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../clib-code/os/timer/timer.c</FilePath>
             </File>
           </Files>
         </Group>

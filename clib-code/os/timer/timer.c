@@ -35,13 +35,13 @@ static TimerTick _timer_get_tick(const TimerScheduler *self)
 
 static void _timer_assert_ops(const TimerOps *ops)
 {
-    ASSERT(ops != NULL);
-    ASSERT(ops->get_tick != NULL);
+    WD_ASSERT(ops != NULL);
+    WD_ASSERT(ops->get_tick != NULL);
 }
 
 static void _timer_assert_ready(const TimerScheduler *self)
 {
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _timer_assert_ops(self->ops);
 }
 
@@ -103,7 +103,7 @@ static Timer *_timer_find(TimerScheduler *self, TimerId id)
 
 static void _timer_assert_id(TimerId id)
 {
-    ASSERT(id != TIMER_ID_INVALID);
+    WD_ASSERT(id != TIMER_ID_INVALID);
 }
 
 static Timer *_timer_find_checked(TimerScheduler *self, TimerId id)
@@ -115,9 +115,9 @@ static Timer *_timer_find_checked(TimerScheduler *self, TimerId id)
 static void _timer_assert_start_args(TimerId id, TimerTick delay_ticks, TimerTick period_ticks, timer_action_fn action)
 {
     _timer_assert_id(id);
-    ASSERT(delay_ticks < _timer_tick_half_range);
-    ASSERT(period_ticks == 0U || period_ticks < _timer_tick_half_range);
-    ASSERT(action != NULL);
+    WD_ASSERT(delay_ticks < _timer_tick_half_range);
+    WD_ASSERT(period_ticks == 0U || period_ticks < _timer_tick_half_range);
+    WD_ASSERT(action != NULL);
 }
 
 static Timer *_timer_find_free(TimerScheduler *self)
@@ -198,7 +198,7 @@ void timer_scheduler_init(TimerScheduler *self, const TimerOps *ops, void *ops_u
 {
     size_t i;
 
-    ASSERT(self != NULL);
+    WD_ASSERT(self != NULL);
     _timer_assert_ops(ops);
 
     self->ops = ops;

@@ -23,7 +23,7 @@ tags:
 
 `[[gpio]] -> [[until]]`
 
-`gpio` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[until]]` 中的 `ASSERT`，用于空指针、缺失 ops 和非法枚举值检查。
+`gpio` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[until]]` 中的 `WD_ASSERT`，用于空指针、缺失 ops 和非法枚举值检查。
 
 GPIO 中断能力不放入 `GpioOps`，由独立的 `[[gpio_isr]]` 模块提供。普通 GPIO 读写和 GPIO 中断对象可以组合使用，但二者边界保持独立。
 
@@ -178,7 +178,7 @@ typedef enum gpio_pull_t
 } GpioPull;
 ```
 
-如果目标芯片不支持某个上下拉配置，平台 `config` 应触发 `ASSERT`。
+如果目标芯片不支持某个上下拉配置，平台 `config` 应触发 `WD_ASSERT`。
 
 ### `GpioSpeed`
 
@@ -277,7 +277,7 @@ typedef struct gpio_t
 
 ## Ops接口
 
-本节说明具体平台必须实现的硬件操作接口。当前 GPIO 模块要求 `GpioOps` 中的 `config`、`write` 和 `read` 全部实现；实现文件会在使用对应 ops 前执行 `ASSERT` 检查，函数指针为空会直接卡死在断言处。
+本节说明具体平台必须实现的硬件操作接口。当前 GPIO 模块要求 `GpioOps` 中的 `config`、`write` 和 `read` 全部实现；实现文件会在使用对应 ops 前执行 `WD_ASSERT` 检查，函数指针为空会直接卡死在断言处。
 
 ### `gpio_config_fn`
 
@@ -336,7 +336,7 @@ typedef struct gpio_ops_t
 
 `GpioOps` 只保留硬件强相关原语。`toggle`、`set_pull`、`set_mode`、`set_speed`、`set_output_type`、`set_alternate` 和 `deinit` 都由 API 层组合实现。
 
-当前 GPIO 模块认为 `GpioOps` 中的所有函数指针都是必选项。实现文件中会对实际使用到的 ops 做 `ASSERT` 检查：初始化、配置和释放要求 `config` 非空，写电平要求 `write` 非空，读电平和翻转要求 `read` 非空。平台适配时不要把未支持的能力留空；如果某颗芯片不支持某种配置，应在对应 ops 内部触发 `ASSERT` 或做平台侧约束。
+当前 GPIO 模块认为 `GpioOps` 中的所有函数指针都是必选项。实现文件中会对实际使用到的 ops 做 `WD_ASSERT` 检查：初始化、配置和释放要求 `config` 非空，写电平要求 `write` 非空，读电平和翻转要求 `read` 非空。平台适配时不要把未支持的能力留空；如果某颗芯片不支持某种配置，应在对应 ops 内部触发 `WD_ASSERT` 或做平台侧约束。
 
 ## 初始化接口
 
@@ -362,7 +362,7 @@ gpio_init(&led, &led_ops, 13);
 - 生成默认 `GpioConfig`。
 - 调用 `ops->config(pin, &self->config)`。
 
-`self`、`ops` 和 `ops->config` 必须非空，否则触发 `ASSERT`。
+`self`、`ops` 和 `ops->config` 必须非空，否则触发 `WD_ASSERT`。
 
 虽然 `gpio_init` 只会立即调用 `ops->config`，但传入的 `GpioOps` 仍应完整实现 `config`、`write` 和 `read`，否则后续读写或翻转会在断言处卡死。
 
@@ -393,7 +393,7 @@ gpio_config(&led, &config);
 
 该函数会复制 `*config` 到 `self->config`，然后调用平台 `ops->config`。
 
-`self`、`self->ops`、`self->ops->config` 和 `config` 必须有效。`config` 中的枚举值必须属于 `gpio.h` 定义的范围，否则触发 `ASSERT`。
+`self`、`self->ops`、`self->ops->config` 和 `config` 必须有效。`config` 中的枚举值必须属于 `gpio.h` 定义的范围，否则触发 `WD_ASSERT`。
 
 
 ### `gpio_get_config(self)`
@@ -411,7 +411,7 @@ const GpioConfig* config = gpio_get_config(&led);
 ```
 
 该函数返回 `self->config` 的只读指针，不会重新读取硬件，也不会调用 `ops->config` 或 `ops->read`。如果需要让缓存中的 `level` 与硬件输入状态同步，应先调用 `gpio_read`，再调用 `gpio_get_config`。
-`self`、`self->ops`、`self->ops->config`、`self->ops->write` 和 `self->ops->read` 必须有效，否则触发 `ASSERT`。
+`self`、`self->ops`、`self->ops->config`、`self->ops->write` 和 `self->ops->read` 必须有效，否则触发 `WD_ASSERT`。
 
 ## 读写接口
 
@@ -449,7 +449,7 @@ GpioLevel level = gpio_read(&button);
 
 该函数会调用 `ops->read(self->pin)`，并把读到的电平缓存到 `self->config.level`。
 
-返回值必须是合法 `GpioLevel`，否则触发 `ASSERT`。
+返回值必须是合法 `GpioLevel`，否则触发 `WD_ASSERT`。
 
 ### `gpio_toggle(self)`
 
@@ -495,7 +495,7 @@ gpio_deinit(&led);
 ```c
 static void board_gpio_config(size_t pin, const GpioConfig* config)
 {
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 
     switch (config->mode)
     {
@@ -512,7 +512,7 @@ static void board_gpio_config(size_t pin, const GpioConfig* config)
         /* map to chip analog mode */
         break;
     default:
-        ASSERT(0);
+        WD_ASSERT(0);
         break;
     }
 
@@ -520,7 +520,7 @@ static void board_gpio_config(size_t pin, const GpioConfig* config)
 }
 ```
 
-如果芯片不支持某个通用配置，平台映射函数应触发 `ASSERT`，不要把芯片私有常量泄漏到上层 API。
+如果芯片不支持某个通用配置，平台映射函数应触发 `WD_ASSERT`，不要把芯片私有常量泄漏到上层 API。
 
 ## 完整示例
 
@@ -532,7 +532,7 @@ static GpioLevel led_level;
 static void led_config(size_t pin, const GpioConfig* config)
 {
     (void)pin;
-    ASSERT(config != NULL);
+    WD_ASSERT(config != NULL);
 }
 
 static void led_write(size_t pin, GpioLevel level)
@@ -604,7 +604,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\gpio\gpio.
 ## 通用注意事项
 
 > [!warning]
-> `gpio` 使用 `ASSERT` 暴露编程错误，不返回状态码。空指针、缺失 ops、非法枚举值会直接卡死在断言处。
+> `gpio` 使用 `WD_ASSERT` 暴露编程错误，不返回状态码。空指针、缺失 ops、非法枚举值会直接卡死在断言处。
 
 - `gpio` 不分配堆内存，`Gpio` 对象由调用者提供。
 - `GpioConfig` 使用通用语义枚举，平台层负责映射到具体芯片。

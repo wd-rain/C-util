@@ -22,7 +22,7 @@ tags:
 - `clib-code/os/timer/timer.h`
 - `clib-code/os/timer/timer.c`
 
-`timer` 只依赖 `clib-code/until/until.h`，使用其中的 `ASSERT` 暴露编程错误。
+`timer` 只依赖 `clib-code/until/until.h`，使用其中的 `WD_ASSERT` 暴露编程错误。
 
 ## 接口总览
 
@@ -146,7 +146,7 @@ struct timer_scheduler_t
 void timer_scheduler_init(TimerScheduler* self, const TimerOps* ops, void* ops_user_data);
 ```
 
-初始化 timer 调度器。`self`、`ops` 和 `ops->get_tick` 必须有效，否则触发 `ASSERT`。
+初始化 timer 调度器。`self`、`ops` 和 `ops->get_tick` 必须有效，否则触发 `WD_ASSERT`。
 
 ### `timer_scheduler_run_once`
 

@@ -2,21 +2,21 @@
 
 static void _gpio_isr_assert_config(const GpioIsrConfig *config)
 {
-    ASSERT(config != NULL);
-    ASSERT(config->trigger <= WD_GPIO_ISR_BOTH);
+    WD_ASSERT(config != NULL);
+    WD_ASSERT(config->trigger <= WD_GPIO_ISR_BOTH);
 }
 
 static void _gpio_isr_assert_ops(const GpioIsrOps *ops)
 {
-    ASSERT(ops != NULL);
-    ASSERT(ops->config != NULL);
-    ASSERT(ops->isr.pending != NULL);
+    WD_ASSERT(ops != NULL);
+    WD_ASSERT(ops->config != NULL);
+    WD_ASSERT(ops->isr.pending != NULL);
 }
 
 static void _gpio_isr_assert_ready(const GpioIsr *self)
 {
-    ASSERT(self != NULL);
-    ASSERT(self->gpio != NULL);
+    WD_ASSERT(self != NULL);
+    WD_ASSERT(self->gpio != NULL);
     _gpio_isr_assert_ops(self->ops);
 }
 
@@ -39,9 +39,9 @@ static void _gpio_isr_action(Isr *isr)
 {
     GpioIsr *self;
 
-    ASSERT(isr != NULL);
+    WD_ASSERT(isr != NULL);
 
-    self = CONTAINER_OF(isr, GpioIsr, isr);
+    self = WD_CONTAINER_OF(isr, GpioIsr, isr);
 
     if (self->callback != NULL)
     {
@@ -51,8 +51,8 @@ static void _gpio_isr_action(Isr *isr)
 
 void gpio_isr_init(GpioIsr *self, Gpio *gpio, const GpioIsrOps *ops, const GpioIsrConfig *config, gpio_isr_callback_fn callback)
 {
-    ASSERT(self != NULL);
-    ASSERT(gpio != NULL);
+    WD_ASSERT(self != NULL);
+    WD_ASSERT(gpio != NULL);
     _gpio_isr_assert_ops(ops);
     _gpio_isr_assert_config(config);
 

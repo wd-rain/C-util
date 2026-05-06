@@ -24,7 +24,7 @@ tags:
 
 `[[isr]] -> [[until]]`
 
-`isr` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[until]]` 中的 `ASSERT`，用于空指针、缺失 ops 和非法调用检查。
+`isr` 位于 `[[platform]]` 层目录下，但源码不依赖 `platform.h`。它直接依赖 `[[until]]` 中的 `WD_ASSERT`，用于空指针、缺失 ops 和非法调用检查。
 
 ## 接口总览
 
@@ -162,7 +162,7 @@ isr_init(&isr, &board_isr_ops, 3U, action);
 
 该函数会保存 `ops`、`source` 和 `action`。它不会自动调用 `ops->enable`。
 
-`self`、`ops` 和 `ops->pending` 必须有效，否则触发 `ASSERT`。
+`self`、`ops` 和 `ops->pending` 必须有效，否则触发 `WD_ASSERT`。
 
 ## 启停接口
 
@@ -323,7 +323,7 @@ gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\isr\isr.c 
 ## 通用注意事项
 
 > [!warning]
-> `isr` 使用 `ASSERT` 暴露编程错误，不返回状态码。空对象、空 `ops`、缺失 `pending`、缺失启停函数会直接卡死在断言处。
+> `isr` 使用 `WD_ASSERT` 暴露编程错误，不返回状态码。空对象、空 `ops`、缺失 `pending`、缺失启停函数会直接卡死在断言处。
 
 - `IRQHandler` 只调用 `isr_handle` 或其他外设 ISR 转发函数，不写业务逻辑。
 - `action` 在 ISR 上下文中执行，必须短小、确定、不可阻塞。

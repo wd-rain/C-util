@@ -23,7 +23,7 @@ static void _bsp_init_eeprom_i2c(void)
     gpio_config.sda_config = pin_config;
 
     status = i2c_init(&eeprom_i2c, bsp_i2c_ops(), WD_BSP_I2C_BUS_1, &i2c_config, &gpio_config);
-    ASSERT(status == WD_I2C_STATUS_OK);
+    WD_ASSERT(status == WD_I2C_STATUS_OK);
 }
 
 static void _bsp_init_pe3_isr(void)
