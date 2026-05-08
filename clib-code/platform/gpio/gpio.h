@@ -117,12 +117,12 @@ typedef struct gpio_t
 } Gpio;
 
 // 接口
-void gpio_init(Gpio *self, const GpioOps *ops, size_t pin); // 会将其设置成悬空输入
+void gpio_init(Gpio *self, const GpioOps *ops, size_t pin);
 void gpio_config(Gpio *self, const GpioConfig *config);
 const GpioConfig *gpio_get_config(const Gpio *self);
 void gpio_write(Gpio *self, GpioLevel level);
 GpioLevel gpio_read(Gpio *self);
 void gpio_toggle(Gpio *self);
-void gpio_deinit(Gpio *self); // 会将其设置成悬空输入
+void gpio_deinit(Gpio *self);
 
 #endif

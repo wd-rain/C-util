@@ -38,6 +38,7 @@ static char *_cmd_line_match_name(char *line, const char *name, char **name_star
     return p;
 }
 
+/* 原地解析参数，支持单/双引号；read 和 write 可指向同一缓冲区，因为写入永远不超过读取位置。 */
 static int _cmd_line_parse(char *read, char *write, char **argv, int max_argc)
 {
     int argc = 0;
