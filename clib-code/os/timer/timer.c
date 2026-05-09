@@ -10,6 +10,7 @@ static int _timer_tick_expired(TimerTick now, TimerTick deadline)
 
 static int _timer_deadline_before(TimerTick left, TimerTick right)
 {
+    /* 用 right-left 判断 left 是否更早，和 expired 一样依赖半范围约束消除回绕歧义。 */
     return left != right && (TimerTick)(right - left) < _timer_tick_half_range;
 }
 
@@ -70,6 +71,7 @@ static int _timer_is_active(const TimerScheduler *self, const Timer *timer)
 
 static TimerId _timer_next_candidate_id(TimerId id)
 {
+    // 跳过保留的无效 ID，避免分配出外部用来表示失败的句柄。
     if (id >= (TimerId)(TIMER_ID_INVALID - 1U))
     {
         return 0U;
@@ -133,6 +135,8 @@ static TimerId _timer_alloc_id(TimerScheduler *self)
 {
     TimerId candidate;
     candidate = self->next_id;
+
+    // candidate 已由上次推进确认未占用；这里为下一次分配提前找到可用候选 ID。
     do
     {
         self->next_id = _timer_next_candidate_id(self->next_id);
@@ -148,12 +152,14 @@ static void _timer_insert_active(TimerScheduler *self, Timer *timer)
     if (self->active_head == NULL ||
         _timer_deadline_before(timer->deadline, self->active_head->deadline))
     {
+        // 新 timer 比当前表头更早到期时，直接成为下一次 run_once 的检查对象。
         timer->next = self->active_head;
         self->active_head = timer;
         return;
     }
 
     current = self->active_head;
+    // 找到第一个更晚到期的节点前插入，保持链表始终按 deadline 排序。
     while (current->next != NULL &&
            !_timer_deadline_before(timer->deadline, current->next->deadline))
     {
@@ -179,6 +185,7 @@ static int _timer_stop_active(TimerScheduler *self, Timer *timer)
     {
         if (*current == timer)
         {
+            // 使用指向指针的游标，删除表头和中间节点时都能更新前驱链接。
             *current = timer->next;
             timer->next = NULL;
             return 0;
@@ -200,6 +207,7 @@ void timer_scheduler_init(TimerScheduler *self, const TimerOps *ops, void *ops_u
     self->active_head = NULL;
     self->next_id = 0U;
 
+    // 固定池槽位以无效 ID 表示空闲，初始化时统一进入可分配状态。
     for (i = 0U; i < TIMER_POOL_SIZE; ++i)
     {
         _timer_clear(&self->timers[i]);
@@ -241,11 +249,13 @@ int timer_scheduler_run_once(TimerScheduler *self)
 
     if (action != NULL)
     {
+        // action 允许调用 stop/delete/restart，因此后续必须重新检查触发中标记。
         action(self, id, user_data);
     }
 
     if (_timer_is_firing(timer))
     {
+        // 仍保持触发中表示 action 没有接管该 timer，可按保存的快照处理周期重插。
         timer->next = NULL;
         if (_timer_is_allocated(timer) && timer->id == id && period != 0U)
         {
@@ -357,6 +367,7 @@ int timer_start(TimerScheduler *self, TimerId id, TimerTick delay_ticks, TimerTi
 
     if (_timer_is_active(self, timer))
     {
+        // 重启运行中的 timer 时先摘除旧节点，避免同一槽位在活动链表中出现两次。
         _timer_stop_active(self, timer);
     }
 

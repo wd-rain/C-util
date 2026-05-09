@@ -117,7 +117,7 @@ typedef void (*slco_fn)(SlcoScheduler *scheduler, Slco *self, const Event *event
 - 宏式状态机恢复位置。
 - `slco_fn fn`。
 - 首次运行标记 `first_run`。
-- 等待的事件类型。
+- 等待的 `EventId`。
 - 延时等待使用的 event timer id。
 - 子协程返回值指针。
 - 用户上下文指针。
@@ -237,7 +237,7 @@ void *slco_user_data(Slco *self);
 
 ### `SLCO_WAIT_EVENT`
 
-等待指定事件类型。调用后当前协程进入 `WD_SLCO_STATE_WAITING_EVENT`，并从协程体返回。slco 内部 event handler 收到匹配事件后，将协程恢复为 ready，并在下一次调度时把事件传回协程体。
+等待指定 `EventId`。该 id 应来自下层 `event_new` 或 slco 内部创建的等待事件。调用后当前协程进入 `WD_SLCO_STATE_WAITING_EVENT`，并从协程体返回。slco 内部 event handler 收到匹配事件后，将协程恢复为 ready，并在下一次调度时把事件传回协程体。
 
 ### `SLCO_DELAY`
 
@@ -285,6 +285,7 @@ void *slco_user_data(Slco *self);
 ```c
 typedef struct app_task_t
 {
+    EventId ready_event;
     int ready_count;
 } AppTask;
 
@@ -298,7 +299,7 @@ static void app_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
 
     while (1)
     {
-        SLCO_WAIT_EVENT(scheduler, self, 1U);
+        SLCO_WAIT_EVENT(scheduler, self, task->ready_event);
         if (event != NULL)
         {
             ++task->ready_count;

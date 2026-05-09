@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "os/timer.md",
+                "file": "os/event.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "timer"
+              "title": "event"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "0ea13f7825c13f5f",
@@ -156,13 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "os/timer.md",
+                "file": "os/event.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "timer 的大纲"
+              "title": "event 的大纲"
             }
           },
           {
