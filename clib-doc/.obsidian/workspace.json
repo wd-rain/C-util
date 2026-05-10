@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "os/event.md",
+                "file": "os/timer.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "event"
+              "title": "timer"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "os/event.md",
+                "file": "os/timer.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "event 的大纲"
+              "title": "timer 的大纲"
             }
           },
           {
@@ -197,8 +197,8 @@
   },
   "active": "2b32c93ddd528501",
   "lastOpenFiles": [
-    "platform/gpio.md",
     "os/event.md",
+    "platform/gpio.md",
     "os.md",
     "os/timer.md",
     "tool/rb.md",
