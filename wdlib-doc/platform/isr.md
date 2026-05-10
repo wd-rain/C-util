@@ -243,7 +243,7 @@ static bool board_isr_pending(size_t source)
 ## 完整示例
 
 ```c
-#include "clib-code/platform/isr/isr.h"
+#include "wdlib-code/platform/isr/isr.h"
 
 static bool pending_flag;
 static bool action_flag;
@@ -301,7 +301,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\isr\isr.c -Iclib-code -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\platform\isr\isr.c -Iwdlib-code -o example.exe
 ```
 
 ## 检查
@@ -309,7 +309,7 @@ gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\isr\isr.c -Iclib-
 可以先执行语法检查确认接口声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\isr\isr.c -Iclib-code
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\platform\isr\isr.c -Iwdlib-code
 ```
 
 手动验证时，重点检查：

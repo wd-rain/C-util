@@ -325,8 +325,8 @@ static void board_gpio_isr_config(size_t pin, const GpioIsrConfig *config)
 ```c
 #include <stdbool.h>
 
-#include "clib-code/platform/gpio/gpio.h"
-#include "clib-code/platform/gpio/gpio_isr.h"
+#include "wdlib-code/platform/gpio/gpio.h"
+#include "wdlib-code/platform/gpio/gpio_isr.h"
 
 static bool pending_flag;
 static volatile bool button_changed;
@@ -435,7 +435,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\isr\isr.c clib-code\platform\gpio\gpio.c clib-code\platform\gpio\gpio_isr.c -Iclib-code -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\platform\isr\isr.c wdlib-code\platform\gpio\gpio.c wdlib-code\platform\gpio\gpio_isr.c -Iwdlib-code -o example.exe
 ```
 
 ## 检查
@@ -443,7 +443,7 @@ gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\isr\isr.c clib-co
 可以先执行语法检查确认接口声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\isr\isr.c clib-code\platform\gpio\gpio.c clib-code\platform\gpio\gpio_isr.c -Iclib-code
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\platform\isr\isr.c wdlib-code\platform\gpio\gpio.c wdlib-code\platform\gpio\gpio_isr.c -Iwdlib-code
 ```
 
 手动验证时，重点检查：

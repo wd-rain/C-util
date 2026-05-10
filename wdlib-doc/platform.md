@@ -20,7 +20,7 @@ tags:
 
 ## 依赖关系
 
-`clib-code/platform/platform.h` 是 platform 层的可裁剪聚合入口，默认包含 `isr/isr.h`、`gpio/gpio.h`、`gpio/gpio_isr.h` 和 `i2c/i2c.h`。它本身不直接包含 `until.h`；`[[until]]` 由具体子模块按需要引入。
+`wdlib-code/platform/platform.h` 是 platform 层的可裁剪聚合入口，默认包含 `isr/isr.h`、`gpio/gpio.h`、`gpio/gpio_isr.h` 和 `i2c/i2c.h`。它本身不直接包含 `until.h`；`[[until]]` 由具体子模块按需要引入。
 
 `[[i2c]]` 当前依赖 `[[gpio]]` 中的类型，用于可选绑定 SCL/SDA 引脚生命周期。因此启用 `PLATFORM_USE_I2C` 时必须同时启用 `PLATFORM_USE_GPIO`。
 

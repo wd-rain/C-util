@@ -24,14 +24,14 @@ tags:
 
 代码路径：
 
-- `clib-code/tool/rb/rb.h`
-- `clib-code/tool/rb/rb.c`
+- `wdlib-code/tool/rb/rb.h`
+- `wdlib-code/tool/rb/rb.c`
 
-`rb` 依赖 `clib-code/until/until.h`，使用其中的 `WD_ASSERT` 和 `WD_MIN`。实现文件额外使用标准头文件 `<string.h>` 完成连续内存拷贝。
+`rb` 依赖 `wdlib-code/until/until.h`，使用其中的 `WD_ASSERT` 和 `WD_MIN`。实现文件额外使用标准头文件 `<string.h>` 完成连续内存拷贝。
 
 ## 实现约束
 
-`rb` 的实现遵循 `AGENTS.md` 中的 clib-code 模块规范：
+`rb` 的实现遵循 `AGENTS.md` 中的 wdlib-code 模块规范：
 
 - 所有公开接口都会在入口处校验传入参数或对象状态。
 - 断言只出现在公开接口入口和 `_rb_assert_*` 辅助函数中。
@@ -260,7 +260,7 @@ int rb_is_full(const Rb *self);
 ## 完整示例
 
 ```c
-#include "clib-code/tool/rb/rb.h"
+#include "wdlib-code/tool/rb/rb.h"
 
 #include <stdint.h>
 
@@ -297,7 +297,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\tool\rb\rb.c -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\tool\rb\rb.c -o example.exe
 ```
 
 ## 检查
@@ -305,7 +305,7 @@ gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\tool\rb\rb.c -o example.ex
 可以先执行语法检查，确认头文件声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\tool\rb\rb.c
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\tool\rb\rb.c
 ```
 
 建议手动或用临时测试程序覆盖以下行为：

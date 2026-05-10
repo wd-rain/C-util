@@ -525,7 +525,7 @@ static void board_gpio_config(size_t pin, const GpioConfig* config)
 ## 完整示例
 
 ```c
-#include "clib-code/platform/gpio/gpio.h"
+#include "wdlib-code/platform/gpio/gpio.h"
 
 static GpioLevel led_level;
 
@@ -582,7 +582,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\gpio\gpio.c -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\platform\gpio\gpio.c -o example.exe
 ```
 
 ## 检查
@@ -590,7 +590,7 @@ gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\gpio\gpio.c -o ex
 当前仓库未保留独立测试文件。可以先执行语法检查确认接口声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\gpio\gpio.c
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\platform\gpio\gpio.c
 ```
 
 如需手动验证调用顺序，可以使用 mock `GpioOps` 记录 `config`、`write`、`read` 的调用次数，重点检查：

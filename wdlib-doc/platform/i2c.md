@@ -538,7 +538,7 @@ static I2cStatus board_i2c_write(size_t bus, uint8_t address, const uint8_t* dat
 ## 完整示例
 
 ```c
-#include "clib-code/platform/i2c/i2c.h"
+#include "wdlib-code/platform/i2c/i2c.h"
 
 static I2cStatus mock_i2c_config(size_t bus, const I2cConfig* config)
 {
@@ -628,7 +628,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\i2c\i2c.c clib-code\platform\gpio\gpio.c -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\platform\i2c\i2c.c wdlib-code\platform\gpio\gpio.c -o example.exe
 ```
 
 ## 检查
@@ -636,7 +636,7 @@ gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\platform\i2c\i2c.c clib-co
 可以先执行语法检查确认接口声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\platform\i2c\i2c.c
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\platform\i2c\i2c.c
 ```
 
 如需手动验证调用顺序，可以使用 mock `I2cOps` 和 `GpioOps` 记录调用次数，重点检查：

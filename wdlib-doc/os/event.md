@@ -22,8 +22,8 @@ tags:
 
 规划代码路径：
 
-- `clib-code/os/event/event.h`
-- `clib-code/os/event/event.c`
+- `wdlib-code/os/event/event.h`
+- `wdlib-code/os/event/event.c`
 
 `event.h` 应直接包含 `../timer/timer.h`，并通过 `TimerScheduler` 承载内部定时能力。`timer.h` 已经包含 `until.h`，因此 `event.h` 不需要也不应该再直接包含 `until.h`；`event` 对 `until` 的依赖来自 timer 的传递依赖。`event` 不依赖 `slco`，也不包含任何协程语义。
 

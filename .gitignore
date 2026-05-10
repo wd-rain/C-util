@@ -102,5 +102,5 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
-clib-tests/
-clib-gui/
+wdlib-tests/
+wdlib-gui/

@@ -335,7 +335,7 @@ get speed 100
 ## 完整示例
 
 ```c
-#include "clib-code/tool/cmdline/cmdline.h"
+#include "wdlib-code/tool/cmdline/cmdline.h"
 
 #include <stdio.h>
 
@@ -371,7 +371,7 @@ int main(void)
 编译：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -g -O0 example.c clib-code\tool\cmdline\cmdline.c -o example.exe
+gcc -std=c99 -Wall -Wextra -g -O0 example.c wdlib-code\tool\cmdline\cmdline.c -o example.exe
 ```
 
 输出：
@@ -390,7 +390,7 @@ argv[2]=hello world
 当前仓库未保留独立测试文件。可以先执行语法检查确认接口声明和实现一致：
 
 ```powershell
-gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only clib-code\tool\cmdline\cmdline.c
+gcc -std=c99 -Wall -Wextra -pedantic -fsyntax-only wdlib-code\tool\cmdline\cmdline.c
 ```
 
 如需手动验证返回值，可以编写一个回调返回固定值的示例：

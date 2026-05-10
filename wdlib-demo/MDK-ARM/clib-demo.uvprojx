@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../User/BSP;../User/APP;../User/OS;../../clib-code;../../clib-code/os/timer;../../clib-code/platform/example/STM32F407ZGT6/gpio;../../clib-code/platform/example/STM32F407ZGT6/i2c;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../User/BSP;../User/APP;../User/OS;../../wdlib-code;../../wdlib-code/os/timer;../../wdlib-code/platform/example/STM32F407ZGT6/gpio;../../wdlib-code/platform/example/STM32F407ZGT6/i2c;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -421,17 +421,17 @@
             <File>
               <FileName>bsp_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/example/STM32F407ZGT6/gpio/bsp_gpio.c</FilePath>
+              <FilePath>../../wdlib-code/platform/example/STM32F407ZGT6/gpio/bsp_gpio.c</FilePath>
             </File>
             <File>
               <FileName>bsp_gpio_isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/example/STM32F407ZGT6/gpio/bsp_gpio_isr.c</FilePath>
+              <FilePath>../../wdlib-code/platform/example/STM32F407ZGT6/gpio/bsp_gpio_isr.c</FilePath>
             </File>
             <File>
               <FileName>bsp_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/example/STM32F407ZGT6/i2c/bsp_i2c.c</FilePath>
+              <FilePath>../../wdlib-code/platform/example/STM32F407ZGT6/i2c/bsp_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -446,47 +446,47 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>clib-code/platform</GroupName>
+          <GroupName>wdlib-code/platform</GroupName>
           <Files>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/gpio/gpio.c</FilePath>
+              <FilePath>../../wdlib-code/platform/gpio/gpio.c</FilePath>
             </File>
             <File>
               <FileName>isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/isr/isr.c</FilePath>
+              <FilePath>../../wdlib-code/platform/isr/isr.c</FilePath>
             </File>
             <File>
               <FileName>gpio_isr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/gpio/gpio_isr.c</FilePath>
+              <FilePath>../../wdlib-code/platform/gpio/gpio_isr.c</FilePath>
             </File>
             <File>
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/platform/i2c/i2c.c</FilePath>
+              <FilePath>../../wdlib-code/platform/i2c/i2c.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>clib-code/os</GroupName>
+          <GroupName>wdlib-code/os</GroupName>
           <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/os/timer/timer.c</FilePath>
+              <FilePath>../../wdlib-code/os/timer/timer.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>clib-code/tool</GroupName>
+          <GroupName>wdlib-code/tool</GroupName>
           <Files>
             <File>
               <FileName>rb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../clib-code/tool/rb/rb.c</FilePath>
+              <FilePath>../../wdlib-code/tool/rb/rb.c</FilePath>
             </File>
           </Files>
         </Group>

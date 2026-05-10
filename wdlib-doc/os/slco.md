@@ -22,8 +22,8 @@ tags:
 
 规划代码路径：
 
-- `clib-code/os/slco/slco.h`
-- `clib-code/os/slco/slco.c`
+- `wdlib-code/os/slco/slco.h`
+- `wdlib-code/os/slco/slco.c`
 
 `slco.h` 应包含 `../event/event.h`。`slco` 可以推进 `EventScheduler`，但 `event` 不知道 slco。
 

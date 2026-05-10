@@ -19,10 +19,10 @@ tags:
 
 代码路径：
 
-- `clib-code/os/timer/timer.h`
-- `clib-code/os/timer/timer.c`
+- `wdlib-code/os/timer/timer.h`
+- `wdlib-code/os/timer/timer.c`
 
-`timer` 只依赖 `clib-code/until/until.h`，使用其中的 `WD_ASSERT` 暴露编程错误。
+`timer` 只依赖 `wdlib-code/until/until.h`，使用其中的 `WD_ASSERT` 暴露编程错误。
 
 ## 接口总览
 
