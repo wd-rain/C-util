@@ -16,7 +16,16 @@
 #error "TIMER_POOL_SIZE must be greater than 0"
 #endif
 
+#if TIMER_POOL_SIZE > 4096U
+#error "TIMER_POOL_SIZE must be <= 4096"
+#endif
+
 #define TIMER_ID_INVALID UINT32_MAX
+#define TIMER_ID_MAGIC   0xA5U
+
+#if (TIMER_ID_MAGIC & 0xFFU) == 0xFFU
+#error "TIMER_ID_MAGIC must not be 0xFF"
+#endif
 
 // 类型定义
 typedef uint32_t TimerTick;
@@ -34,7 +43,16 @@ typedef struct timer_ops_t
 
 typedef struct timer_t
 {
-    TimerId id;
+    union
+    {
+        TimerId id;
+        struct
+        {
+            uint32_t _index : 12;
+            uint32_t generation : 12;
+            uint32_t _magic : 8;
+        };
+    };
     TimerTick deadline;
     TimerTick period;
     timer_action_fn action;
@@ -48,7 +66,6 @@ struct timer_scheduler_t
     void *ops_user_data;
     Timer timers[TIMER_POOL_SIZE];
     Timer *active_head;
-    TimerId next_id;
 };
 
 // 接口

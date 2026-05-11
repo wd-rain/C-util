@@ -197,10 +197,12 @@
   },
   "active": "2b32c93ddd528501",
   "lastOpenFiles": [
+    "os/timer.md.tmp.27164.1778476960088",
+    "os/timer.md.tmp.27164.1778476944419",
     "os/event.md",
+    "os/timer.md",
     "platform/gpio.md",
     "os.md",
-    "os/timer.md",
     "tool/rb.md",
     "tool/cmdline.md",
     "until.md",

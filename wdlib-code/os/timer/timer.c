@@ -28,10 +28,28 @@ static inline int _timer_is_latched(const Timer *timer)
     return timer->next == timer;
 }
 
-// timer 无效判断
+// 编码定时器 id
+static inline TimerId _timer_id_encode(uint16_t generation, uint16_t index)
+{
+    return ((TimerId)TIMER_ID_MAGIC << 24) | ((TimerId)(generation & 0xFFFU) << 12) | (TimerId)(index & 0xFFFU);
+}
+
+// 解码定时器 id magic
+static inline uint8_t _timer_id_magic(TimerId id)
+{
+    return (uint8_t)(id >> 24);
+}
+
+// 解码定时器 id generation
+static inline uint16_t _timer_id_index(TimerId id)
+{
+    return (uint16_t)(id & 0xFFFU);
+}
+
+// 定时器是否为使用
 static inline int _timer_is_not_allocated(const Timer *timer)
 {
-    return timer->id == TIMER_ID_INVALID;
+    return timer->_magic != TIMER_ID_MAGIC;
 }
 
 // 调用ops获取当前 tick
@@ -78,43 +96,43 @@ static int _timer_is_active(const TimerScheduler *self, const Timer *timer)
     return 0;
 }
 
-// 找到下一个候选 ID，跳过保留的无效 ID
-static TimerId _timer_next_candidate_id(TimerId id)
-{
-    // 跳过保留的无效 ID，避免分配出外部用来表示失败的句柄。
-    if (id >= (TimerId)(TIMER_ID_INVALID - 1U))
-    {
-        return 0U;
-    }
-
-    return id + 1U;
-}
-
-// 清空定时器
+// 定时器清除
 static void _timer_clear(Timer *timer)
 {
-    timer->id = TIMER_ID_INVALID;
+    timer->_magic = 0xFFU;
     timer->next = NULL;
 }
 
-// 找到指定 ID 的定时器
+// 找到对应激活定时器
 static Timer *_timer_find(TimerScheduler *self, TimerId id)
 {
-    size_t i;
-    for (i = 0U; i < TIMER_POOL_SIZE; ++i)
+    uint16_t index;
+    Timer *timer;
+
+    if (_timer_id_magic(id) != TIMER_ID_MAGIC)
     {
-        if (self->timers[i].id == id)
-        {
-            return &self->timers[i];
-        }
+        return NULL;
     }
-    return NULL;
+
+    index = _timer_id_index(id);
+    if (index >= TIMER_POOL_SIZE)
+    {
+        return NULL;
+    }
+
+    timer = &self->timers[index];
+    if (timer->id != id)
+    {
+        return NULL;
+    }
+
+    return timer;
 }
 
-// 定时器 ID 断言
+// 断言id有效
 static void _timer_assert_id(TimerId id)
 {
-    WD_ASSERT(id != TIMER_ID_INVALID);
+    WD_ASSERT(_timer_id_magic(id) == TIMER_ID_MAGIC);
 }
 
 // 定时器start有效断言
@@ -140,20 +158,6 @@ static Timer *_timer_find_free(TimerScheduler *self)
     }
 
     return NULL;
-}
-
-// 提供空闲id，推进 next_id 到下一个可用候选，保证分配的 id 不会重复。
-static TimerId _timer_alloc_id(TimerScheduler *self)
-{
-    TimerId candidate;
-    candidate = self->next_id;
-
-    // candidate 已由上次推进确认未占用；这里为下一次分配提前找到可用候选 ID。
-    do
-    {
-        self->next_id = _timer_next_candidate_id(self->next_id);
-    } while (_timer_find(self, self->next_id));
-    return candidate;
 }
 
 // 插入定时器
@@ -219,12 +223,11 @@ void timer_scheduler_init(TimerScheduler *self, const TimerOps *ops, void *ops_u
     self->ops = ops;
     self->ops_user_data = ops_user_data;
     self->active_head = NULL;
-    self->next_id = 0U;
 
-    // 固定池槽位以无效 ID 表示空闲，初始化时统一进入可分配状态。
     for (i = 0U; i < TIMER_POOL_SIZE; ++i)
     {
-        _timer_clear(&self->timers[i]);
+        self->timers[i].id = 0U;
+        self->timers[i].next = NULL;
     }
 }
 
@@ -306,6 +309,7 @@ TimerId timer_new(TimerScheduler *self)
 {
     Timer *timer;
     TimerId id;
+    uint8_t index;
 
     _timer_assert_ready(self);
 
@@ -315,12 +319,8 @@ TimerId timer_new(TimerScheduler *self)
         return TIMER_ID_INVALID;
     }
 
-    id = _timer_alloc_id(self);
-    if (id == TIMER_ID_INVALID)
-    {
-        return TIMER_ID_INVALID;
-    }
-
+    index = (uint16_t)(timer - self->timers);
+    id = _timer_id_encode(timer->generation, index);
     timer->id = id;
     timer->next = NULL;
 
@@ -341,6 +341,7 @@ int timer_delete(TimerScheduler *self, TimerId id)
     if (timer != NULL)
     {
         (void)_timer_stop_active(self, timer);
+        timer->generation++;
         _timer_clear(timer);
         result = 0;
     }
@@ -363,11 +364,8 @@ int timer_start(TimerScheduler *self, TimerId id, TimerTick delay_ticks, TimerTi
         return -1;
     }
 
-    if (_timer_is_active(self, timer))
-    {
-        // 重启运行中的 timer 时先摘除旧节点，避免同一槽位在活动链表中出现两次。
-        (void)_timer_stop_active(self, timer);
-    }
+    // 重启运行中的 timer 时先摘除旧节点，避免同一槽位在活动链表中出现两次。
+    (void)_timer_stop_active(self, timer);
 
     timer->deadline = now + delay_ticks;
     timer->period = period_ticks;
@@ -408,7 +406,7 @@ int timer_is_running(TimerScheduler *self, TimerId id)
     timer = _timer_find(self, id);
     if (timer != NULL)
     {
-        return (_timer_is_latched(timer) | _timer_is_active(self, timer)) ? 1 : 0;
+        return (_timer_is_latched(timer) || _timer_is_active(self, timer)) ? 1 : 0;
     }
 
     return -1;
