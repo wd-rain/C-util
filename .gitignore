@@ -110,3 +110,5 @@ node_modules/
 dist/
 *.local
 CLAUDE.md
+clib-gui/
+clib-tests/
