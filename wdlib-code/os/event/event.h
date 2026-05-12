@@ -135,14 +135,13 @@ TimerTick event_scheduler_next_delay(EventScheduler *self);
 EventId event_new(EventScheduler *self, event_handler_fn handler, void *user_data);
 int event_delete(EventScheduler *self, EventId id);
 
-int event_post(EventScheduler *self, EventId event_id, TimerTick delay_ticks, uint32_t value, void *user_data);
-int event_post_delay(EventScheduler *self, EventId event_id, TimerTick delay_ticks, uint32_t value, void *user_data);
+int event_post(EventScheduler *self, EventId event_id, TimerTick delay_ticks, uint32_t value);
 uint32_t event_is_posted(EventScheduler *self, EventId event_id);
 int event_trigger(EventScheduler *self, EventId event_id, uint32_t value, void *user_data);
 
-EventTimerId event_timer_add(EventScheduler *self, EventId event_id, TimerTick period_ticks, uint32_t value, void *user_data);
+EventTimerId event_timer_add(EventScheduler *self, EventId event_id, TimerTick period_ticks, uint32_t value);
 int event_timer_remove(EventScheduler *self, EventTimerId id);
 
-EventMonitorId event_monitor_add(EventScheduler *self, EventId event_id, event_monitor_fn monitor, TimerTick period_ticks, void *user_data);
+EventMonitorId event_monitor_add(EventScheduler *self, EventId event_id, event_monitor_fn monitor, TimerTick period_ticks);
 int event_monitor_remove(EventScheduler *self, EventMonitorId id);
 #endif

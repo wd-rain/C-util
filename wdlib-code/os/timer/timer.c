@@ -254,7 +254,6 @@ int timer_scheduler_run_once(TimerScheduler *self)
 
     if (timer->action != NULL)
     {
-        
         timer->action(self, timer->id, timer->user_data);
     }
 
@@ -401,7 +400,6 @@ int timer_is_running(TimerScheduler *self, TimerId id)
     Timer *timer;
 
     _timer_assert_ready(self);
-    _timer_assert_id(id);
 
     timer = _timer_find(self, id);
     if (timer != NULL)
