@@ -185,10 +185,10 @@ void timer_scheduler_init(TimerScheduler* self, const TimerOps* ops, void* ops_u
 ### `timer_scheduler_run_once`
 
 ```c
-int timer_scheduler_run_once(TimerScheduler* self);
+void timer_scheduler_run_once(TimerScheduler* self);
 ```
 
-非阻塞推进一次 timer 调度。该函数最多触发一个到期 timer。没有到期 timer 时也返回 `0`。
+非阻塞推进一次 timer 调度。该函数最多触发一个到期 timer。没有到期 timer 时直接返回。
 
 ### `timer_scheduler_now`
 

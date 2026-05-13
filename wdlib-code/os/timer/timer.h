@@ -70,7 +70,7 @@ struct timer_scheduler_t
 
 // 接口
 void timer_scheduler_init(TimerScheduler *self, const TimerOps *ops, void *ops_user_data);
-int timer_scheduler_run_once(TimerScheduler *self);
+void timer_scheduler_run_once(TimerScheduler *self);
 TimerTick timer_scheduler_now(TimerScheduler *self);
 TimerTick timer_scheduler_next_delay(TimerScheduler *self);
 

@@ -231,7 +231,7 @@ void timer_scheduler_init(TimerScheduler *self, const TimerOps *ops, void *ops_u
     }
 }
 
-int timer_scheduler_run_once(TimerScheduler *self)
+void timer_scheduler_run_once(TimerScheduler *self)
 {
     Timer *timer;
     TimerTick now;
@@ -249,7 +249,7 @@ int timer_scheduler_run_once(TimerScheduler *self)
     }
     else
     {
-        goto exit;
+        return;
     }
 
     if (timer->action != NULL)
@@ -267,8 +267,6 @@ int timer_scheduler_run_once(TimerScheduler *self)
             _timer_insert_active(self, timer);
         }
     }
-    exit:
-    return 0;
 }
 
 TimerTick timer_scheduler_now(TimerScheduler *self)

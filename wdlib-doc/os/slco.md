@@ -103,10 +103,10 @@ typedef enum slco_state_t
 ### `slco_fn`
 
 ```c
-typedef void (*slco_fn)(SlcoScheduler *scheduler, Slco *self, const Event *event);
+typedef void (*slco_fn)(SlcoScheduler *scheduler, Slco *self, EventId event_id, uint32_t event_value);
 ```
 
-协程体函数由调度器调用。`event` 在事件唤醒时指向触发事件；普通调度或首次启动时可为 `NULL`。
+协程体函数由调度器调用。事件唤醒时传入触发的 `event_id` 与 `event_value`；普通调度或首次启动时传入 `EVENT_ID_INVALID` 和 `0U`。
 
 ### `Slco`
 
@@ -289,18 +289,19 @@ typedef struct app_task_t
     int ready_count;
 } AppTask;
 
-static void app_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
+static void app_task(SlcoScheduler *scheduler, Slco *self, EventId event_id, uint32_t event_value)
 {
     AppTask *task;
 
     task = (AppTask *)slco_user_data(self);
+    (void)event_value;
 
     SLCO_BEGIN(scheduler, self);
 
     while (1)
     {
         SLCO_WAIT_EVENT(scheduler, self, task->ready_event);
-        if (event != NULL)
+        if (event_id == task->ready_event)
         {
             ++task->ready_count;
         }
@@ -313,9 +314,10 @@ static void app_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
 ### 延时等待
 
 ```c
-static void blink_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
+static void blink_task(SlcoScheduler *scheduler, Slco *self, EventId event_id, uint32_t event_value)
 {
-    (void)event;
+    (void)event_id;
+    (void)event_value;
 
     SLCO_BEGIN(scheduler, self);
 
@@ -339,9 +341,10 @@ typedef struct calc_result_t
 
 static CalcResult result;
 
-static void child_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
+static void child_task(SlcoScheduler *scheduler, Slco *self, EventId event_id, uint32_t event_value)
 {
-    (void)event;
+    (void)event_id;
+    (void)event_value;
 
     SLCO_BEGIN(scheduler, self);
 
@@ -351,11 +354,12 @@ static void child_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
     SLCO_END(scheduler, self);
 }
 
-static void parent_task(SlcoScheduler *scheduler, Slco *self, const Event *event)
+static void parent_task(SlcoScheduler *scheduler, Slco *self, EventId event_id, uint32_t event_value)
 {
     void *child_result;
 
-    (void)event;
+    (void)event_id;
+    (void)event_value;
 
     SLCO_BEGIN(scheduler, self);
 

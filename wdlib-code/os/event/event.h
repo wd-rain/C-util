@@ -29,6 +29,10 @@
 #error "EVENT_HANDLER_POOL_SIZE must be greater than 0"
 #endif
 
+#if EVENT_HANDLER_POOL_SIZE > 4096U
+#error "EVENT_HANDLER_POOL_SIZE must be <= 4096"
+#endif
+
 #if EVENT_MONITOR_POOL_SIZE == 0U
 #error "EVENT_MONITOR_POOL_SIZE must be greater than 0"
 #endif
@@ -46,38 +50,38 @@
 
 #define EVENT_ID_INVALID UINT32_MAX
 #define EVENT_MONITOR_ID_INVALID UINT32_MAX
-#define EVENT_TIMER_ID_INVALID UINT32_MAX
+#define EVENT_ID_MAGIC 0x5AU
+
+#if (EVENT_ID_MAGIC & 0xFFU) == 0xFFU
+#error "EVENT_ID_MAGIC must not be 0xFF"
+#endif
 
 // 类型定义
 typedef uint32_t EventId;
 typedef uint32_t EventMonitorId;
-typedef uint32_t EventTimerId;
 
 typedef struct event_scheduler_t EventScheduler;
 
-typedef enum event_source_t
-{
-    WD_EVENT_SOURCE_EXTERNAL = 0,
-    WD_EVENT_SOURCE_TIMER,
-    WD_EVENT_SOURCE_MONITOR
-} EventSource;
-
-typedef struct event_t
-{
-    EventId id;
-    EventSource source;
-    uint32_t value;
-    void *user_data;
-} Event;
-
-typedef void (*event_handler_fn)(EventScheduler *scheduler, const Event *event, void *user_data);
-typedef uint32_t (*event_monitor_fn)(EventScheduler *scheduler, void **event_user_data, void *user_data);
+typedef uint32_t (*event_handler_fn)(EventScheduler *scheduler, EventId id, uint32_t value, void *user_data);
+typedef uint32_t (*event_monitor_fn)(EventScheduler *scheduler, EventId id);
 
 typedef struct event_handler_t
 {
-    EventId id;
+    union
+    {
+        EventId id;
+        struct
+        {
+            uint32_t _index : 12;
+            uint32_t generation : 12;
+            uint32_t _magic : 8;
+        };
+    };
     event_handler_fn handler;
     void *user_data;
+    uint32_t value;
+    uint8_t active;
+    struct event_handler_t *next;
 } EventHandler;
 
 typedef struct event_post_t
@@ -85,10 +89,7 @@ typedef struct event_post_t
     EventScheduler *scheduler;
     EventId event_id;
     TimerId timer_id;
-    EventSource source;
-    uint8_t state;
-    uint32_t value;
-    void *user_data;
+    uint32_t bit;
 } EventPost;
 
 typedef struct event_monitor_t
@@ -99,17 +100,17 @@ typedef struct event_monitor_t
     event_monitor_fn monitor;
     TimerId timer_id;
     TimerTick period_ticks;
-    void *user_data;
+    struct event_monitor_t *next;
+    struct event_monitor_t *poll_next;
 } EventMonitor;
 
 typedef struct event_timer_t
 {
     EventScheduler *scheduler;
-    EventTimerId id;
     EventId event_id;
     TimerId timer_id;
     uint32_t value;
-    void *user_data;
+    struct event_timer_t *next;
 } EventTimer;
 
 struct event_scheduler_t
@@ -118,29 +119,29 @@ struct event_scheduler_t
     EventPost posts[EVENT_QUEUE_SIZE];
     EventHandler handlers[EVENT_HANDLER_POOL_SIZE];
     EventMonitor monitors[EVENT_MONITOR_POOL_SIZE];
-    EventTimer event_timers[TIMER_POOL_SIZE];
-    EventId next_event_id;
+    EventTimer event_timers[EVENT_TIMER_POOL_SIZE];
+    EventHandler *active_head;
+    EventHandler *active_tail;
+    EventMonitor *monitor_head;
+    EventMonitor *poll_monitor_head;
+    EventMonitor *poll_monitor_cursor;
+    EventTimer *event_timer_head;
     EventMonitorId next_monitor_id;
-    EventTimerId next_timer_id;
-    size_t post_scan_index;
-    size_t monitor_scan_index;
-    int internal_error;
 };
 
 // 接口
 void event_scheduler_init(EventScheduler *self, const TimerOps *timer_ops, void *timer_user_data);
-int event_scheduler_run_once(EventScheduler *self);
+void event_scheduler_run_once(EventScheduler *self);
 TimerTick event_scheduler_next_delay(EventScheduler *self);
 
 EventId event_new(EventScheduler *self, event_handler_fn handler, void *user_data);
 int event_delete(EventScheduler *self, EventId id);
 
 int event_post(EventScheduler *self, EventId event_id, TimerTick delay_ticks, uint32_t value);
-uint32_t event_is_posted(EventScheduler *self, EventId event_id);
-int event_trigger(EventScheduler *self, EventId event_id, uint32_t value, void *user_data);
+int event_trigger(EventScheduler *self, EventId event_id, uint32_t value);
 
-EventTimerId event_timer_add(EventScheduler *self, EventId event_id, TimerTick period_ticks, uint32_t value);
-int event_timer_remove(EventScheduler *self, EventTimerId id);
+TimerId event_timer_add(EventScheduler *self, EventId event_id, TimerTick period_ticks, uint32_t value);
+int event_timer_remove(EventScheduler *self, TimerId id);
 
 EventMonitorId event_monitor_add(EventScheduler *self, EventId event_id, event_monitor_fn monitor, TimerTick period_ticks);
 int event_monitor_remove(EventScheduler *self, EventMonitorId id);
